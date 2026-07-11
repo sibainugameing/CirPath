@@ -1,0 +1,18 @@
+[package]
+name = "cirpath"
+version = "1.0.0"
+edition = "2021"
+authors = ["CirPath Project"]
+description = "CirPath - a dependency-free line-oriented text editor written in Rust"
+
+[[bin]]
+name = "cirpath"
+path = "src/main.rs"
+
+[dependencies]
+# 外部クレートなし。標準ライブラリ(std)のみで完結させる。
+# （オフライン環境でも 'cargo build' が確実に成功することを最優先するための設計判断）
+
+[profile.release]
+opt-level = 3
+lto = true
