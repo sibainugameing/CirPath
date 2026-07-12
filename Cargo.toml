@@ -1,17 +1,18 @@
 [package]
 name = "cirpath"
-version = "1.0.0"
+version = "2.0.0"
 edition = "2021"
 authors = ["CirPath Project"]
-description = "CirPath - a dependency-free line-oriented text editor written in Rust"
+description = "CirPath - a VSCode-like terminal text editor built with ratatui"
 
 [[bin]]
 name = "cirpath"
 path = "src/main.rs"
 
 [dependencies]
-# 外部クレートなし。標準ライブラリ(std)のみで完結させる。
-# （オフライン環境でも 'cargo build' が確実に成功することを最優先するための設計判断）
+# 実務で広く使われている組み合わせ（ratatui 0.28.x <-> crossterm 0.28.x）を固定。
+ratatui = { version = "0.28.1", default-features = true }
+crossterm = "0.28.1"
 
 [profile.release]
 opt-level = 3
