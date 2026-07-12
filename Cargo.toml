@@ -1,19 +1,17 @@
 [package]
 name = "cirpath"
-version = "2.0.0"
+version = "0.1.0"
 edition = "2021"
-authors = ["CirPath Project"]
-description = "CirPath - a VSCode-like terminal text editor built with ratatui"
 
-[[bin]]
-name = "cirpath"
-path = "src/main.rs"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-# 実務で広く使われている組み合わせ（ratatui 0.28.x <-> crossterm 0.28.x）を固定。
-ratatui = { version = "0.28.1", default-features = true }
-crossterm = "0.28.1"
-
-[profile.release]
-opt-level = 3
-lto = true
+ratatui = "0.26"
+crossterm = "0.27"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+unicode-width = "0.1"
+dirs = "5"
+indexmap = "=2.2.6"
+base64 = "=0.21.7"
