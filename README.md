@@ -1,158 +1,80 @@
 # CirPath
 
-**CirPath** is a simple, functional TUI text editor written in Rust, inspired by **GNU nano**.
-
-It consists of three main views:
-
-* **Editor** — Edit and save text files
-* **File Browser** — Navigate directories and open files
-* **Menu** — Configure CirPath
-
-Switch between views using `Ctrl+E` and `Ctrl+Q`.
-
-CirPath avoids traditional window borders and instead uses inverted title bars and status bars, creating a minimal interface inspired by nano.
-
----
-
-## Features
-
-* Fast and lightweight TUI written in Rust
-* nano-inspired text editing
-* Built-in file browser
-* Built-in settings menu
-* Direct configuration file editing
-* UTF-8 text support
-* Hidden file toggle
-* Configurable editor and browser behavior
-* Simple modular architecture
-
----
+nano を参考にした、シンプルで機能美のある Rust 製 TUI テキストエディタ。
+「エディタ」「ファイルブラウザ」「メニュー」の3ウィンドウを Ctrl+E / Ctrl+Q で切り替えて使います。
+枠線(Border)は使わず、nano のようにタイトルバーとステータスバー(反転表示)だけで構成しています。
+表示文字は環境依存文字(絵文字・機種依存記号)を使わず、日本語(JIS標準の範囲)とASCII文字のみで構成しています。
+表示言語は日本語 / English に対応しており、メニューの「一般」から切り替えられます(切り替えは即座に全画面へ反映されます)。
 
 
-| File         | Description                                               |
-| ------------ | --------------------------------------------------------- |
-| `main.rs`    | Entry point, terminal initialization, and main event loop |
-| `app.rs`     | Application state, view management, and rendering         |
-| `editor.rs`  | nano-style text buffer editing, loading, and saving       |
-| `browser.rs` | File browser, directory navigation, and path input        |
-| `menu.rs`    | Settings UI with category and detail panels               |
-| `config.rs`  | Configuration loading and saving                          |
 
-The configuration file is stored at:
+新機能を追加する場合は、対応する画面のモジュール (`editor.rs` / `browser.rs` / `menu.rs`) にロジックを足し、
+`Config` に項目を増やして `menu.rs` の `items_for` / `apply_selection` に選択肢を追加するだけで
+他のモジュールに影響を与えずに拡張できるように設計しています。
 
-```text
-~/.config/cirpath/config.toml
-```
-
-CirPath is designed to be modular. New functionality can generally be added to the corresponding module:
-
-* `editor.rs` — Editor features
-* `browser.rs` — File browser features
-* `menu.rs` — Menu and settings UI
-
-New configuration options can be added to `Config` and exposed through `items_for` and `apply_selection` in `menu.rs`.
-
----
-
-## Build
-
-### Requirements
-
-* Rust
-* Cargo
-
-Build the release version:
+## ビルド・実行
 
 ```bash
 cargo build --release
-```
-
-Run CirPath:
-
-```bash
 ./target/release/cirpath
 ```
 
-Alternatively:
+## 操作方法
 
-```bash
-cargo run --release
-```
+### 共通(どの画面でも)
+| キー | 動作 |
+|---|---|
+| Ctrl+E | 次のウィンドウへ切替 (エディタ、ブラウザ、メニューの順に循環) |
+| Ctrl+Q | 前のウィンドウへ切替 |
+| Ctrl+G | ヘルプ(メニューのキー操作一覧を直接開く) |
 
----
+### エディタ画面 (nano機能を網羅)
+| キー | 動作 |
+|---|---|
+| 文字入力 | カーソル位置に挿入 (日本語などのIMEはOSに任せる) |
+| Enter | 改行 |
+| Backspace / Delete | 前後の文字を削除(行またぎ対応) |
+| 上下左右 / Home / End / PageUp / PageDown | カーソル移動 |
+| Ctrl+S | 保存 |
+| Ctrl+O | 別名で保存 (Write Out。ファイル名をプロンプト入力) |
+| Ctrl+R | 指定したファイルの内容をカーソル位置へ挿入 (Read File) |
+| Ctrl+W | 検索 (Where Is)。空欄でEnterすると直前の検索語を再検索 |
+| Ctrl+\ | 置換 (Replace)。検索文字列、置換後文字列の順に入力し全置換 |
+| Ctrl+_ | 指定した行番号へジャンプ (Go To Line) |
+| Ctrl+K | 現在行を切り取り(連続で押すと1つのバッファにまとめて蓄積) |
+| Ctrl+U | 切り取ったテキストをカーソル位置に貼り付け (Uncut) |
+| Ctrl+C | 現在のカーソル位置(行/列)と総行数を表示 |
+| Ctrl+X | 終了(未保存の変更がある場合はもう一度押して確認) |
+| Esc | 検索/置換/保存名などの入力プロンプトをキャンセル |
 
-## Controls
+### ファイルブラウザ画面
+| キー | 動作 |
+|---|---|
+| 上下 | 項目選択 |
+| Enter / 右 | 選択中のディレクトリに入る / ファイルを開く |
+| Backspace / 左 / u | 親ディレクトリへ移動 |
+| g | 絶対パス・相対パスを直接入力して移動(実行ディレクトリ外にも移動可能) |
+| n | 新規ファイルを作成 |
+| N (Shift+n) | 新規フォルダを作成 |
+| r | 選択中の項目の名前を変更 |
+| d | 選択中の項目を削除(y/nで確認、誤操作防止) |
+| Ctrl+H | 隠しファイル(ドットファイル)表示切替 |
+| Esc | パス入力・作成・リネームの入力プロンプトをキャンセル |
 
-### Global
+ファイルを選択すると、メニューの「ファイルブラウザ」設定で
+「ファイル選択時に自動でエディタへ切り替える」が ON(デフォルト)の場合、自動でエディタ画面に切り替わります。
 
-| Key      | Action                                           |
-| -------- | ------------------------------------------------ |
-| `Ctrl+E` | Switch to the next view: Editor → Browser → Menu |
-| `Ctrl+Q` | Switch to the previous view                      |
+### メニュー画面 (Word風)
+| キー | 動作 |
+|---|---|
+| 左 / 右 | 左(カテゴリ)/右(詳細項目)パネルの切替 |
+| 上 / 下 | 選択中パネル内で項目移動 |
+| Enter | 左パネルなら右パネルへ移動、右パネルなら選択項目を決定/トグル |
 
-### Editor
+メニューの「設定ファイル」カテゴリから、設定ファイル(TOML)そのものをエディタで開いて直接編集できます。
+変更は `~/.config/cirpath/config.toml` に保存されます。
 
-| Key                   | Action                                   |
-| --------------------- | ---------------------------------------- |
-| Character input       | Insert text at the cursor                |
-| `Enter`               | Insert a new line                        |
-| `Backspace`           | Delete the previous character            |
-| `Delete`              | Delete the next character                |
-| `↑` `↓` `←` `→`       | Move the cursor                          |
-| `Home` / `End`        | Move to the beginning or end of the line |
-| `PageUp` / `PageDown` | Move through the document                |
-| `Ctrl+S`              | Save the current file                    |
-| `Ctrl+X`              | Exit CirPath                             |
-| `Ctrl+K`              | Delete the current line                  |
+## エラー表示について
 
-If there are unsaved changes, press `Ctrl+X` again to confirm exit.
-
-IME input, including Japanese input, is handled by the operating system and terminal environment.
-
-### File Browser
-
-| Key                     | Action                             |
-| ----------------------- | ---------------------------------- |
-| `↑` / `↓`               | Select an item                     |
-| `Enter` / `→`           | Enter a directory or open a file   |
-| `Backspace` / `←` / `u` | Move to the parent directory       |
-| `g`                     | Enter an absolute or relative path |
-| `Ctrl+H`                | Toggle hidden files                |
-
-The file browser can navigate outside the directory where CirPath was launched.
-
-By default, opening a file automatically switches to the editor. This behavior can be changed from the **File Browser** settings.
-
-### Menu
-
-| Key       | Action                                                 |
-| --------- | ------------------------------------------------------ |
-| `←` / `→` | Switch between the category and detail panels          |
-| `↑` / `↓` | Move through items                                     |
-| `Enter`   | Open a category, select an option, or toggle a setting |
-
-The configuration file itself can also be opened directly from the **Configuration File** category and edited using CirPath.
-
-Changes are stored in:
-
-```text
-~/.config/cirpath/config.toml
-```
-
----
-
-## Dependencies
-
-CirPath is built with:
-
-* `ratatui` — Terminal user interface
-* `crossterm` — Terminal input and control
-* `serde` — Configuration serialization
-* `toml` — TOML configuration support
-* `dirs` — Platform-specific configuration paths
-
----
-
-## License
-
-See the `LICENSE` file for details.
+存在しないパスへの移動、保存失敗、検索失敗などのエラーは赤背景でステータスバーに表示されます。
+また、次に何かキーを押すと自動的にメッセージ表示はクリアされ、古いエラーが画面に残り続けることはありません。
