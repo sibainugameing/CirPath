@@ -2,69 +2,68 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 
+/// CirPath の全設定。
+/// メニュー画面から編集され、設定ファイル自体もエディタで直接編集できる。
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
-    /// ファイルブラウザでファイルを選択した際に自動でエディタへ切り替えるか
-    pub auto_jump_to_editor: bool,
-    /// タブ幅
+    /// ファイルブラウザでファイルを選択した際、自動でエディタ画面へ切り替えるか
+    pub auto_open_on_select: bool,
+    /// タブ幅(半角スペース換算)
     pub tab_width: usize,
-    /// 行番号を表示するか
+    /// エディタで行番号を表示するか
     pub show_line_numbers: bool,
-    /// 起動時に開くディレクトリ (空なら実行時のカレントディレクトリ)
-    pub start_dir: String,
-    /// テーマ (dark / light)
-    pub theme: String,
+    /// 保存時に末尾の改行を保証するか
+    pub ensure_trailing_newline: bool,
+    /// ファイルブラウザで隠しファイル(ドットファイル)を表示するか
+    pub show_hidden_files: bool,
+    /// ステータスバー等のヒント表示(nano風キー案内)を表示するか
+    pub show_key_hints: bool,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Config {
-            auto_jump_to_editor: true,
+            auto_open_on_select: true,
             tab_width: 4,
             show_line_numbers: true,
-            start_dir: String::new(),
-            theme: "dark".to_string(),
+            ensure_trailing_newline: true,
+            show_hidden_files: false,
+            show_key_hints: true,
         }
     }
 }
 
 impl Config {
-    pub fn config_dir() -> PathBuf {
-        let base = dirs::config_dir().unwrap_or_else(|| PathBuf::from("."));
-        base.join("cirpath")
-    }
-
+    /// 設定ファイルの保存場所を返す。
+    /// OS標準の設定ディレクトリを優先し、取得できない場合は実行ディレクトリ直下を使う。
     pub fn config_path() -> PathBuf {
-        Self::config_dir().join("config.toml")
+        if let Some(dir) = dirs::config_dir() {
+            let cirpath_dir = dir.join("cirpath");
+            let _ = fs::create_dir_all(&cirpath_dir);
+            cirpath_dir.join("config.toml")
+        } else {
+            PathBuf::from("cirpath_config.toml")
+        }
     }
 
-    pub fn load() -> Config {
+    /// 設定ファイルを読み込む。存在しない/壊れている場合はデフォルト値を返す。
+    pub fn load() -> Self {
         let path = Self::config_path();
-        if let Ok(text) = fs::read_to_string(&path) {
-            match toml::from_str::<Config>(&text) {
-                Ok(cfg) => return cfg,
-                Err(_) => return Config::default(),
+        match fs::read_to_string(&path) {
+            Ok(text) => toml::from_str(&text).unwrap_or_default(),
+            Err(_) => {
+                let cfg = Config::default();
+                cfg.save();
+                cfg
             }
         }
-        let cfg = Config::default();
-        let _ = cfg.save();
-        cfg
     }
 
-    pub fn save(&self) -> std::io::Result<()> {
-        let dir = Self::config_dir();
-        fs::create_dir_all(&dir)?;
-        let text = toml::to_string_pretty(self).unwrap_or_default();
-        fs::write(Self::config_path(), text)
-    }
-
-    /// 設定ファイルが存在しなければ作成し、パスを返す (エディタで開く用)
-    pub fn ensure_and_path() -> PathBuf {
+    /// 現在の設定をファイルへ書き出す。
+    pub fn save(&self) {
         let path = Self::config_path();
-        if !path.exists() {
-            let cfg = Config::default();
-            let _ = cfg.save();
+        if let Ok(text) = toml::to_string_pretty(self) {
+            let _ = fs::write(path, text);
         }
-        path
     }
 }

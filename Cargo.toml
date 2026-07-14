@@ -2,16 +2,21 @@
 name = "cirpath"
 version = "0.1.0"
 edition = "2021"
+description = "CirPath - a nano-inspired TUI text editor with integrated file browser and menu"
+default-run = "cirpath"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[[bin]]
+name = "cirpath"
+path = "src/main.rs"
 
 [dependencies]
-ratatui = "0.26"
-crossterm = "0.27"
+ratatui = "=0.26.3"
+crossterm = "=0.27.0"
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-toml = "0.8"
-unicode-width = "0.1"
-dirs = "5"
-indexmap = "=2.2.6"
-base64 = "=0.21.7"
+toml = "=0.5.11"
+unicode-width = "=0.1.13"
+dirs = "=5.0.1"
+
+[profile.release]
+opt-level = 3
+lto = true
