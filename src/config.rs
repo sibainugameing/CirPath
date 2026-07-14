@@ -18,6 +18,9 @@ pub struct Config {
     pub show_hidden_files: bool,
     /// ステータスバー等のヒント表示(nano風キー案内)を表示するか
     pub show_key_hints: bool,
+    /// 表示言語 ("ja" または "en")
+    #[serde(default)]
+    pub language: String,
 }
 
 impl Default for Config {
@@ -29,6 +32,7 @@ impl Default for Config {
             ensure_trailing_newline: true,
             show_hidden_files: false,
             show_key_hints: true,
+            language: "ja".to_string(),
         }
     }
 }

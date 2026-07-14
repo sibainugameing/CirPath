@@ -1,3 +1,4 @@
+use crate::i18n::{self, Lang};
 use crate::status::StatusMsg;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{
@@ -75,7 +76,7 @@ impl Editor {
         }
     }
 
-    pub fn open_file(&mut self, path: PathBuf) {
+    pub fn open_file(&mut self, path: PathBuf, lang: Lang) {
         match fs::read_to_string(&path) {
             Ok(content) => {
                 let mut lines: Vec<String> = content.lines().map(|l| l.to_string()).collect();
@@ -88,7 +89,7 @@ impl Editor {
                 self.cursor_col = 0;
                 self.scroll_row = 0;
                 self.dirty = false;
-                self.message = Some(StatusMsg::info("ファイルを読み込みました"));
+                self.message = Some(StatusMsg::info(i18n::ed_loaded(lang)));
             }
             Err(e) => {
                 // ファイルが存在しない場合は新規作成として空バッファで開く
@@ -98,22 +99,22 @@ impl Editor {
                 self.cursor_col = 0;
                 self.scroll_row = 0;
                 self.dirty = false;
-                self.message = Some(StatusMsg::error(format!("新規ファイル(読込エラー: {})", e)));
+                self.message = Some(StatusMsg::error(i18n::ed_new_file_read_error(lang, &e.to_string())));
             }
         }
     }
 
-    pub fn save(&mut self) {
+    pub fn save(&mut self, lang: Lang) {
         let Some(path) = self.path.clone() else {
             // 保存先未指定の場合は別名保存プロンプトへ
             self.mode = Mode::SaveAs;
             self.input_buffer.clear();
             return;
         };
-        self.write_to(path);
+        self.write_to(path, lang);
     }
 
-    fn write_to(&mut self, path: PathBuf) {
+    fn write_to(&mut self, path: PathBuf, lang: Lang) {
         let mut content = self.lines.join("\n");
         content.push('\n');
         match fs::write(&path, content) {
@@ -121,10 +122,10 @@ impl Editor {
                 self.dirty = false;
                 let display = path.display().to_string();
                 self.path = Some(path);
-                self.message = Some(StatusMsg::info(format!("保存しました: {}", display)));
+                self.message = Some(StatusMsg::info(i18n::ed_saved(lang, &display)));
             }
             Err(e) => {
-                self.message = Some(StatusMsg::error(format!("保存に失敗しました: {}", e)));
+                self.message = Some(StatusMsg::error(i18n::ed_save_failed(lang, &e.to_string())));
             }
         }
     }
@@ -252,23 +253,23 @@ impl Editor {
         self.last_was_cut = true;
     }
 
-    fn paste_cut_buffer(&mut self) {
+    fn paste_cut_buffer(&mut self, lang: Lang) {
         if self.cut_buffer.is_empty() {
-            self.message = Some(StatusMsg::error("貼り付けるデータがありません"));
+            self.message = Some(StatusMsg::error(i18n::ed_no_clipboard(lang)));
             return;
         }
         let text = self.cut_buffer.join("\n");
         self.insert_str_at_cursor(&text);
-        self.message = Some(StatusMsg::info("貼り付けました"));
+        self.message = Some(StatusMsg::info(i18n::ed_pasted(lang)));
     }
 
     /// モード中(検索/置換/別名保存等)の入力プロンプトの処理。
-    fn handle_mode_key(&mut self, key: KeyEvent) -> EditorAction {
+    fn handle_mode_key(&mut self, key: KeyEvent, lang: Lang) -> EditorAction {
         match key.code {
             KeyCode::Esc => {
                 self.mode = Mode::Normal;
                 self.input_buffer.clear();
-                self.message = Some(StatusMsg::info("キャンセルしました"));
+                self.message = Some(StatusMsg::info(i18n::ed_cancelled(lang)));
             }
             KeyCode::Backspace => {
                 self.input_buffer.pop();
@@ -284,20 +285,20 @@ impl Editor {
                         self.mode = Mode::Normal;
                         let needle = if value.is_empty() { self.last_search.clone() } else { value };
                         if needle.is_empty() {
-                            self.message = Some(StatusMsg::error("検索文字列が空です"));
+                            self.message = Some(StatusMsg::error(i18n::ed_search_empty(lang)));
                         } else {
                             self.last_search = needle.clone();
                             if self.search_forward(&needle) {
-                                self.message = Some(StatusMsg::info(format!("検索: \"{}\" が見つかりました", needle)));
+                                self.message = Some(StatusMsg::info(i18n::ed_search_found(lang, &needle)));
                             } else {
-                                self.message = Some(StatusMsg::error(format!("見つかりません: \"{}\"", needle)));
+                                self.message = Some(StatusMsg::error(i18n::ed_search_not_found(lang, &needle)));
                             }
                         }
                     }
                     Mode::ReplaceFrom => {
                         if value.is_empty() {
                             self.mode = Mode::Normal;
-                            self.message = Some(StatusMsg::error("検索文字列が空です"));
+                            self.message = Some(StatusMsg::error(i18n::ed_search_empty(lang)));
                         } else {
                             self.replace_from = value;
                             self.mode = Mode::ReplaceTo;
@@ -307,10 +308,7 @@ impl Editor {
                         self.mode = Mode::Normal;
                         let from = self.replace_from.clone();
                         let count = self.replace_all(&from, &value);
-                        self.message = Some(StatusMsg::info(format!(
-                            "\"{}\" を \"{}\" に {} 件置換しました",
-                            from, value, count
-                        )));
+                        self.message = Some(StatusMsg::info(i18n::ed_replaced(lang, &from, &value, count)));
                     }
                     Mode::GotoLine => {
                         self.mode = Mode::Normal;
@@ -318,22 +316,20 @@ impl Editor {
                             Ok(n) if n >= 1 && n <= self.lines.len() => {
                                 self.cursor_row = n - 1;
                                 self.cursor_col = 0;
-                                self.message = Some(StatusMsg::info(format!("{} 行目へ移動しました", n)));
+                                self.message = Some(StatusMsg::info(i18n::ed_goto_ok(lang, n)));
                             }
                             _ => {
-                                self.message = Some(StatusMsg::error(format!(
-                                    "無効な行番号です(1〜{}の範囲で指定してください)",
-                                    self.lines.len()
-                                )));
+                                self.message =
+                                    Some(StatusMsg::error(i18n::ed_goto_invalid(lang, self.lines.len())));
                             }
                         }
                     }
                     Mode::SaveAs => {
                         self.mode = Mode::Normal;
                         if value.trim().is_empty() {
-                            self.message = Some(StatusMsg::error("ファイル名が空です"));
+                            self.message = Some(StatusMsg::error(i18n::ed_filename_empty(lang)));
                         } else {
-                            self.write_to(PathBuf::from(value.trim()));
+                            self.write_to(PathBuf::from(value.trim()), lang);
                         }
                     }
                     Mode::InsertFile => {
@@ -342,10 +338,12 @@ impl Editor {
                         match fs::read_to_string(&path) {
                             Ok(content) => {
                                 self.insert_str_at_cursor(&content);
-                                self.message = Some(StatusMsg::info(format!("挿入しました: {}", path.display())));
+                                self.message =
+                                    Some(StatusMsg::info(i18n::ed_inserted(lang, &path.display().to_string())));
                             }
                             Err(e) => {
-                                self.message = Some(StatusMsg::error(format!("読み込みに失敗しました: {}", e)));
+                                self.message =
+                                    Some(StatusMsg::error(i18n::ed_insert_failed(lang, &e.to_string())));
                             }
                         }
                     }
@@ -357,9 +355,9 @@ impl Editor {
         EditorAction::None
     }
 
-    pub fn handle_key(&mut self, key: KeyEvent) -> EditorAction {
+    pub fn handle_key(&mut self, key: KeyEvent, lang: Lang) -> EditorAction {
         if self.mode != Mode::Normal {
-            return self.handle_mode_key(key);
+            return self.handle_mode_key(key, lang);
         }
 
         // Ctrl+X 以外を押したら終了確認はキャンセル
@@ -374,7 +372,7 @@ impl Editor {
         if key.modifiers.contains(KeyModifiers::CONTROL) {
             match key.code {
                 KeyCode::Char('s') => {
-                    self.save();
+                    self.save(lang);
                     return EditorAction::None;
                 }
                 KeyCode::Char('o') => {
@@ -415,11 +413,11 @@ impl Editor {
                     return EditorAction::ShowHelp;
                 }
                 KeyCode::Char('c') => {
-                    self.message = Some(StatusMsg::info(format!(
-                        "カーソル位置: {} 行 {} 列 (全 {} 行)",
+                    self.message = Some(StatusMsg::info(i18n::ed_cursor_pos(
+                        lang,
                         self.cursor_row + 1,
                         self.cursor_col + 1,
-                        self.lines.len()
+                        self.lines.len(),
                     )));
                     return EditorAction::None;
                 }
@@ -428,9 +426,7 @@ impl Editor {
                         return EditorAction::Quit;
                     } else {
                         self.confirm_quit = true;
-                        self.message = Some(StatusMsg::error(
-                            "未保存の変更があります。もう一度 Ctrl+X で終了".to_string(),
-                        ));
+                        self.message = Some(StatusMsg::error(i18n::ed_confirm_quit(lang)));
                         return EditorAction::None;
                     }
                 }
@@ -439,7 +435,7 @@ impl Editor {
                     return EditorAction::None;
                 }
                 KeyCode::Char('u') => {
-                    self.paste_cut_buffer();
+                    self.paste_cut_buffer(lang);
                     return EditorAction::None;
                 }
                 _ => return EditorAction::None,
@@ -554,19 +550,19 @@ impl Editor {
         }
     }
 
-    fn mode_prompt_label(&self) -> Option<&'static str> {
+    fn mode_prompt_label(&self, lang: Lang) -> Option<&'static str> {
         match self.mode {
             Mode::Normal => None,
-            Mode::Search => Some("検索文字列"),
-            Mode::ReplaceFrom => Some("置換: 検索文字列"),
-            Mode::ReplaceTo => Some("置換: 置換後の文字列"),
-            Mode::GotoLine => Some("移動先の行番号"),
-            Mode::SaveAs => Some("保存先ファイル名"),
-            Mode::InsertFile => Some("挿入するファイルのパス"),
+            Mode::Search => Some(i18n::ed_prompt_search(lang)),
+            Mode::ReplaceFrom => Some(i18n::ed_prompt_replace_from(lang)),
+            Mode::ReplaceTo => Some(i18n::ed_prompt_replace_to(lang)),
+            Mode::GotoLine => Some(i18n::ed_prompt_goto(lang)),
+            Mode::SaveAs => Some(i18n::ed_prompt_saveas(lang)),
+            Mode::InsertFile => Some(i18n::ed_prompt_insertfile(lang)),
         }
     }
 
-    pub fn draw(&mut self, f: &mut Frame, area: Rect, show_line_numbers: bool) {
+    pub fn draw(&mut self, f: &mut Frame, area: Rect, show_line_numbers: bool, lang: Lang) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([Constraint::Min(1), Constraint::Length(1)])
@@ -617,7 +613,7 @@ impl Editor {
         }
 
         // ステータス行 (nano風、反転表示。エラー時は赤)
-        let status_bar = if let Some(label) = self.mode_prompt_label() {
+        let status_bar = if let Some(label) = self.mode_prompt_label(lang) {
             Paragraph::new(Line::from(Span::styled(
                 format!(" {}: {}", label, self.input_buffer),
                 Style::default().fg(Color::Black).bg(Color::White),
@@ -627,15 +623,15 @@ impl Editor {
                 .path
                 .as_ref()
                 .map(|p| p.display().to_string())
-                .unwrap_or_else(|| "新規バッファ".to_string());
-            let dirty_mark = if self.dirty { " [変更あり]" } else { "" };
+                .unwrap_or_else(|| i18n::ed_new_buffer(lang).to_string());
+            let dirty_mark = if self.dirty { i18n::ed_dirty_mark(lang) } else { "" };
             let msg = self.message.clone().unwrap_or_else(|| {
-                StatusMsg::info(format!(
-                    "{}{}  行 {}/{}",
-                    name,
+                StatusMsg::info(i18n::ed_status_line(
+                    lang,
+                    &name,
                     dirty_mark,
                     self.cursor_row + 1,
-                    self.lines.len()
+                    self.lines.len(),
                 ))
             });
             Paragraph::new(Line::from(Span::styled(format!(" {} ", msg.text), msg.style())))

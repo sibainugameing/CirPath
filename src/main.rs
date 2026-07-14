@@ -2,6 +2,7 @@ mod app;
 mod browser;
 mod config;
 mod editor;
+mod i18n;
 mod menu;
 mod status;
 

@@ -1,6 +1,7 @@
 use crate::browser::{Browser, BrowserAction};
 use crate::config::Config;
 use crate::editor::{Editor, EditorAction};
+use crate::i18n::{self, Lang};
 use crate::menu::{Menu, MenuAction};
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{
@@ -33,11 +34,11 @@ impl Focus {
             Focus::Menu => Focus::Browser,
         }
     }
-    fn label(self) -> &'static str {
+    fn label(self, lang: Lang) -> &'static str {
         match self {
-            Focus::Editor => "エディタ",
-            Focus::Browser => "ファイルブラウザ",
-            Focus::Menu => "メニュー",
+            Focus::Editor => i18n::focus_editor(lang),
+            Focus::Browser => i18n::focus_browser(lang),
+            Focus::Menu => i18n::focus_menu(lang),
         }
     }
 }
@@ -64,6 +65,10 @@ impl App {
         }
     }
 
+    fn lang(&self) -> Lang {
+        Lang::from_str(&self.config.language)
+    }
+
     pub fn handle_key(&mut self, key: KeyEvent) {
         // グローバルなウィンドウ切替 (Ctrl+Q / Ctrl+E)
         if key.modifiers.contains(KeyModifiers::CONTROL) {
@@ -80,8 +85,10 @@ impl App {
             }
         }
 
+        let lang = self.lang();
+
         match self.focus {
-            Focus::Editor => match self.editor.handle_key(key) {
+            Focus::Editor => match self.editor.handle_key(key, lang) {
                 EditorAction::Quit => self.should_quit = true,
                 EditorAction::ShowHelp => {
                     // キー操作一覧カテゴリ(索引3)を開いてメニューへ切り替える
@@ -91,9 +98,9 @@ impl App {
                 }
                 EditorAction::None => {}
             },
-            Focus::Browser => match self.browser.handle_key(key) {
+            Focus::Browser => match self.browser.handle_key(key, lang) {
                 BrowserAction::OpenFile(path) => {
-                    self.editor.open_file(path);
+                    self.editor.open_file(path, lang);
                     if self.config.auto_open_on_select {
                         self.focus = Focus::Editor;
                     }
@@ -105,7 +112,8 @@ impl App {
                 let before_hidden = self.config.show_hidden_files;
                 match self.menu.handle_key(key, &mut self.config) {
                     MenuAction::OpenConfigFile => {
-                        self.editor.open_file(Config::config_path());
+                        let lang_after = self.lang();
+                        self.editor.open_file(Config::config_path(), lang_after);
                         self.focus = Focus::Editor;
                     }
                     MenuAction::None => {}
@@ -119,16 +127,14 @@ impl App {
     }
 
     pub fn draw(&mut self, f: &mut Frame) {
+        let lang = self.lang();
         let area = f.size();
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([Constraint::Length(1), Constraint::Min(1)])
             .split(area);
 
-        let title = format!(
-            " CirPath - {}   (Ctrl+E:次へ Ctrl+Q:前へ Ctrl+G:ヘルプ)",
-            self.focus.label()
-        );
+        let title = i18n::title_bar(lang, self.focus.label(lang));
         let title_bar = Paragraph::new(Line::from(Span::styled(
             title,
             Style::default()
@@ -139,8 +145,8 @@ impl App {
         f.render_widget(title_bar, chunks[0]);
 
         match self.focus {
-            Focus::Editor => self.editor.draw(f, chunks[1], self.config.show_line_numbers),
-            Focus::Browser => self.browser.draw(f, chunks[1]),
+            Focus::Editor => self.editor.draw(f, chunks[1], self.config.show_line_numbers, lang),
+            Focus::Browser => self.browser.draw(f, chunks[1], lang),
             Focus::Menu => self.menu.draw(f, chunks[1], &self.config),
         }
     }

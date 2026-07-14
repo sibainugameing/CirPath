@@ -1,3 +1,4 @@
+use crate::i18n::{self, Lang};
 use crate::status::StatusMsg;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{
@@ -42,6 +43,8 @@ pub struct Browser {
     mode: Mode,
     input_buffer: String,
     pub message: Option<StatusMsg>,
+    /// 表示スクロール位置(先頭に表示しているエントリのインデックス)
+    scroll: usize,
 }
 
 impl Browser {
@@ -55,6 +58,7 @@ impl Browser {
             mode: Mode::Normal,
             input_buffer: String::new(),
             message: None,
+            scroll: 0,
         };
         b.refresh();
         b
@@ -99,6 +103,7 @@ impl Browser {
             self.current_dir = path;
         }
         self.selected = 0;
+        self.scroll = 0;
         self.refresh();
     }
 
@@ -111,45 +116,42 @@ impl Browser {
         }
     }
 
-    fn handle_mode_key(&mut self, key: KeyEvent) -> BrowserAction {
-        match self.mode {
-            Mode::ConfirmDelete => {
-                match key.code {
-                    KeyCode::Char('y') | KeyCode::Char('Y') => {
-                        self.mode = Mode::Normal;
-                        if let Some(target) = self.entries.get(self.selected).cloned() {
-                            let result = if target.is_dir() {
-                                fs::remove_dir_all(&target)
-                            } else {
-                                fs::remove_file(&target)
-                            };
-                            match result {
-                                Ok(_) => {
-                                    self.message = Some(StatusMsg::info("削除しました"));
-                                    self.refresh();
-                                }
-                                Err(e) => {
-                                    self.message =
-                                        Some(StatusMsg::error(format!("削除に失敗しました: {}", e)));
-                                }
+    fn handle_mode_key(&mut self, key: KeyEvent, lang: Lang) -> BrowserAction {
+        if self.mode == Mode::ConfirmDelete {
+            match key.code {
+                KeyCode::Char('y') | KeyCode::Char('Y') => {
+                    self.mode = Mode::Normal;
+                    if let Some(target) = self.entries.get(self.selected).cloned() {
+                        let result = if target.is_dir() {
+                            fs::remove_dir_all(&target)
+                        } else {
+                            fs::remove_file(&target)
+                        };
+                        match result {
+                            Ok(_) => {
+                                self.message = Some(StatusMsg::info(i18n::br_deleted(lang)));
+                                self.refresh();
+                            }
+                            Err(e) => {
+                                self.message =
+                                    Some(StatusMsg::error(i18n::br_delete_failed(lang, &e.to_string())));
                             }
                         }
                     }
-                    _ => {
-                        self.mode = Mode::Normal;
-                        self.message = Some(StatusMsg::info("削除をキャンセルしました"));
-                    }
                 }
-                return BrowserAction::None;
+                _ => {
+                    self.mode = Mode::Normal;
+                    self.message = Some(StatusMsg::info(i18n::br_delete_cancelled(lang)));
+                }
             }
-            _ => {}
+            return BrowserAction::None;
         }
 
         match key.code {
             KeyCode::Esc => {
                 self.mode = Mode::Normal;
                 self.input_buffer.clear();
-                self.message = Some(StatusMsg::info("キャンセルしました"));
+                self.message = Some(StatusMsg::info(i18n::br_cancelled(lang)));
             }
             KeyCode::Backspace => {
                 self.input_buffer.pop();
@@ -164,7 +166,7 @@ impl Browser {
                 self.input_buffer.clear();
 
                 if raw.is_empty() {
-                    self.message = Some(StatusMsg::error("入力が空です"));
+                    self.message = Some(StatusMsg::error(i18n::br_input_empty(lang)));
                     return BrowserAction::None;
                 }
 
@@ -173,27 +175,29 @@ impl Browser {
                         let target = self.resolve(&raw);
                         if target.is_dir() {
                             self.go_to(target);
-                            self.message = Some(StatusMsg::info("移動しました"));
+                            self.message = Some(StatusMsg::info(i18n::br_moved(lang)));
                         } else if target.is_file() {
                             return BrowserAction::OpenFile(target);
                         } else {
-                            self.message =
-                                Some(StatusMsg::error(format!("パスが見つかりません: {}", target.display())));
+                            self.message = Some(StatusMsg::error(i18n::br_path_not_found(
+                                lang,
+                                &target.display().to_string(),
+                            )));
                         }
                     }
                     Mode::NewFile => {
                         let target = self.current_dir.join(&raw);
                         if target.exists() {
-                            self.message = Some(StatusMsg::error("同名のファイルが既に存在します"));
+                            self.message = Some(StatusMsg::error(i18n::br_file_exists(lang)));
                         } else {
                             match fs::write(&target, "") {
                                 Ok(_) => {
-                                    self.message = Some(StatusMsg::info(format!("作成しました: {}", raw)));
+                                    self.message = Some(StatusMsg::info(i18n::br_created_file(lang, &raw)));
                                     self.refresh();
                                 }
                                 Err(e) => {
                                     self.message =
-                                        Some(StatusMsg::error(format!("作成に失敗しました: {}", e)));
+                                        Some(StatusMsg::error(i18n::br_create_failed(lang, &e.to_string())));
                                 }
                             }
                         }
@@ -201,16 +205,16 @@ impl Browser {
                     Mode::NewFolder => {
                         let target = self.current_dir.join(&raw);
                         if target.exists() {
-                            self.message = Some(StatusMsg::error("同名のフォルダが既に存在します"));
+                            self.message = Some(StatusMsg::error(i18n::br_folder_exists(lang)));
                         } else {
                             match fs::create_dir_all(&target) {
                                 Ok(_) => {
-                                    self.message = Some(StatusMsg::info(format!("フォルダを作成しました: {}", raw)));
+                                    self.message = Some(StatusMsg::info(i18n::br_created_folder(lang, &raw)));
                                     self.refresh();
                                 }
                                 Err(e) => {
                                     self.message =
-                                        Some(StatusMsg::error(format!("作成に失敗しました: {}", e)));
+                                        Some(StatusMsg::error(i18n::br_create_failed(lang, &e.to_string())));
                                 }
                             }
                         }
@@ -220,12 +224,12 @@ impl Browser {
                             let new_path = self.current_dir.join(&raw);
                             match fs::rename(&target, &new_path) {
                                 Ok(_) => {
-                                    self.message = Some(StatusMsg::info("名前を変更しました"));
+                                    self.message = Some(StatusMsg::info(i18n::br_renamed(lang)));
                                     self.refresh();
                                 }
                                 Err(e) => {
                                     self.message =
-                                        Some(StatusMsg::error(format!("変更に失敗しました: {}", e)));
+                                        Some(StatusMsg::error(i18n::br_rename_failed(lang, &e.to_string())));
                                 }
                             }
                         }
@@ -238,9 +242,9 @@ impl Browser {
         BrowserAction::None
     }
 
-    pub fn handle_key(&mut self, key: KeyEvent) -> BrowserAction {
+    pub fn handle_key(&mut self, key: KeyEvent, lang: Lang) -> BrowserAction {
         if self.mode != Mode::Normal {
-            return self.handle_mode_key(key);
+            return self.handle_mode_key(key, lang);
         }
 
         // 通常のキー入力ではメッセージは都度クリアする(古いエラーが残り続けるのを防ぐ)
@@ -277,14 +281,14 @@ impl Browser {
                         .unwrap_or_default();
                     self.mode = Mode::Rename;
                 } else {
-                    self.message = Some(StatusMsg::error("対象が選択されていません"));
+                    self.message = Some(StatusMsg::error(i18n::br_no_selection(lang)));
                 }
             }
             KeyCode::Char('d') => {
                 if self.entries.get(self.selected).is_some() {
                     self.mode = Mode::ConfirmDelete;
                 } else {
-                    self.message = Some(StatusMsg::error("対象が選択されていません"));
+                    self.message = Some(StatusMsg::error(i18n::br_no_selection(lang)));
                 }
             }
             KeyCode::Char('h') | KeyCode::Char('H')
@@ -313,15 +317,37 @@ impl Browser {
         BrowserAction::None
     }
 
-    pub fn draw(&mut self, f: &mut Frame, area: Rect) {
+    fn adjust_scroll(&mut self, visible_rows: usize) {
+        if visible_rows == 0 {
+            return;
+        }
+        if self.selected < self.scroll {
+            self.scroll = self.selected;
+        } else if self.selected >= self.scroll + visible_rows {
+            self.scroll = self.selected + 1 - visible_rows;
+        }
+        // エントリ数が減った場合などにスクロール位置が末尾を超えないよう補正
+        if self.entries.len() <= visible_rows {
+            self.scroll = 0;
+        } else if self.scroll > self.entries.len() - visible_rows {
+            self.scroll = self.entries.len() - visible_rows;
+        }
+    }
+
+    pub fn draw(&mut self, f: &mut Frame, area: Rect, lang: Lang) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
             .constraints([Constraint::Min(1), Constraint::Length(1)])
             .split(area);
 
+        let visible_rows = chunks[0].height as usize;
+        self.adjust_scroll(visible_rows);
+
         let items: Vec<ListItem> = self
             .entries
             .iter()
+            .skip(self.scroll)
+            .take(visible_rows)
             .map(|p| {
                 let name = p
                     .file_name()
@@ -338,7 +364,7 @@ impl Browser {
 
         let mut state = ListState::default();
         if !self.entries.is_empty() {
-            state.select(Some(self.selected));
+            state.select(Some(self.selected - self.scroll));
         }
 
         let list = List::new(items).highlight_style(
@@ -349,35 +375,34 @@ impl Browser {
         );
         f.render_stateful_widget(list, chunks[0], &mut state);
 
-        let bottom = if let Some(label) = self.prompt_label() {
+        let bottom = if let Some(label) = self.prompt_label(lang) {
             Paragraph::new(Line::from(Span::styled(
                 format!(" {}: {}", label, self.input_buffer),
                 Style::default().fg(Color::Black).bg(Color::White),
             )))
         } else if self.mode == Mode::ConfirmDelete {
             Paragraph::new(Line::from(Span::styled(
-                " 本当に削除しますか? (y: はい / それ以外: キャンセル)",
+                i18n::br_confirm_delete(lang),
                 Style::default().fg(Color::White).bg(Color::Red),
             )))
         } else {
-            let msg = self.message.clone().unwrap_or_else(|| {
-                StatusMsg::info(
-                    "up/down:選択 enter/right:開く backspace/left/u:上へ g:パス移動 n:新規ファイル N:新規フォルダ r:名前変更 d:削除",
-                )
-            });
+            let msg = self
+                .message
+                .clone()
+                .unwrap_or_else(|| StatusMsg::info(i18n::br_hint(lang)));
             let path_line = format!(" {}  |  {}", self.current_dir.display(), msg.text);
             Paragraph::new(Line::from(Span::styled(path_line, msg.style())))
         };
         f.render_widget(bottom, chunks[1]);
     }
 
-    fn prompt_label(&self) -> Option<&'static str> {
+    fn prompt_label(&self, lang: Lang) -> Option<&'static str> {
         match self.mode {
             Mode::Normal | Mode::ConfirmDelete => None,
-            Mode::GotoPath => Some("移動先パス(相対/絶対)"),
-            Mode::NewFile => Some("新規ファイル名"),
-            Mode::NewFolder => Some("新規フォルダ名"),
-            Mode::Rename => Some("新しい名前"),
+            Mode::GotoPath => Some(i18n::br_prompt_goto(lang)),
+            Mode::NewFile => Some(i18n::br_prompt_new_file(lang)),
+            Mode::NewFolder => Some(i18n::br_prompt_new_folder(lang)),
+            Mode::Rename => Some(i18n::br_prompt_rename(lang)),
         }
     }
 }
