@@ -233,6 +233,40 @@ pub fn ed_prompt_insertfile(l: Lang) -> &'static str {
     }
 }
 
+/// nano/pico 風の下部ショートカット一覧。(キー表示, ラベル) のペアを列優先で12個返す。
+pub fn ed_shortcut_grid(l: Lang) -> Vec<(&'static str, &'static str)> {
+    match l {
+        Lang::Ja => vec![
+            ("^G", "ヘルプ"),
+            ("^X", "終了"),
+            ("^S", "保存"),
+            ("^O", "別名保存"),
+            ("^W", "検索"),
+            ("^\\", "置換"),
+            ("^R", "ファイル挿入"),
+            ("^_", "行移動"),
+            ("^K", "切り取り"),
+            ("^U", "貼り付け"),
+            ("^C", "位置表示"),
+            ("", ""),
+        ],
+        Lang::En => vec![
+            ("^G", "Get Help"),
+            ("^X", "Exit"),
+            ("^S", "Save"),
+            ("^O", "Save As"),
+            ("^W", "Where Is"),
+            ("^\\", "Replace"),
+            ("^R", "Read File"),
+            ("^_", "Go To Line"),
+            ("^K", "Cut Text"),
+            ("^U", "UnCut Text"),
+            ("^C", "Cur Pos"),
+            ("", ""),
+        ],
+    }
+}
+
 // ---- ファイルブラウザ / File browser ----
 pub fn br_hint(l: Lang) -> &'static str {
     match l {

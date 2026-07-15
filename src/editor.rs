@@ -3,7 +3,7 @@ use crate::status::StatusMsg;
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Rect},
-    style::{Color, Style},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::Paragraph,
     Frame,
@@ -565,7 +565,7 @@ impl Editor {
     pub fn draw(&mut self, f: &mut Frame, area: Rect, show_line_numbers: bool, lang: Lang) {
         let chunks = Layout::default()
             .direction(Direction::Vertical)
-            .constraints([Constraint::Min(1), Constraint::Length(1)])
+            .constraints([Constraint::Min(1), Constraint::Length(1), Constraint::Length(2)])
             .split(area);
 
         let text_area = chunks[0];
@@ -637,6 +637,39 @@ impl Editor {
             Paragraph::new(Line::from(Span::styled(format!(" {} ", msg.text), msg.style())))
         };
         f.render_widget(status_bar, chunks[1]);
+
+        // ショートカット一覧 (nano/pico風、2行x6列のグリッド)
+        draw_shortcut_grid(f, chunks[2], lang);
+    }
+}
+
+/// nano/pico を参考にした、下部2行x6列のキーショートカット一覧を描画する。
+fn draw_shortcut_grid(f: &mut Frame, area: Rect, lang: Lang) {
+    let entries = i18n::ed_shortcut_grid(lang);
+    let cols = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints([Constraint::Ratio(1, 6); 6])
+        .split(area);
+
+    for (col_idx, col_area) in cols.iter().enumerate() {
+        let rows = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Length(1), Constraint::Length(1)])
+            .split(*col_area);
+
+        for row_idx in 0..2 {
+            let entry_idx = col_idx * 2 + row_idx;
+            if let Some((key, label)) = entries.get(entry_idx) {
+                if key.is_empty() {
+                    continue;
+                }
+                let line = Line::from(vec![
+                    Span::styled(format!("{}", key), Style::default().add_modifier(Modifier::BOLD)),
+                    Span::raw(format!(" {}", label)),
+                ]);
+                f.render_widget(Paragraph::new(line), rows[row_idx]);
+            }
+        }
     }
 }
 
