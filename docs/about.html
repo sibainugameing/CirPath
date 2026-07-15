@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>仕様・制限 - CirPath</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <header>
+            <div class="nav-container">
+                <a href="index.html" class="logo">> CirPath</a>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">ホーム</a></li>
+                        <li><a href="docs.html">操作ガイド</a></li>
+                        <li>
+                            <a href="about.html" class="active">仕様・制限</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <h1
+                style="
+                    margin-bottom: 2rem;
+                    font-family: var(--font-mono);
+                    color: var(--text-light);
+                "
+            >
+                仕様と制限事項
+            </h1>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>完全な日本語・英語サポート</h3>
+                    <p>
+                        CirPathは日本語（JISコード範囲内）と英語の完全な2か国語表示に対応しています。メニュー、タイトル、エラー、さらにはPICO風のショートカットガイドに至るまで実行時に一瞬で切り替えが可能です。
+                    </p>
+                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #aaa">
+                        ※切り替えは「Menu -> General -> Switch display
+                        language」から行えます。
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>アクセシブルなカラーパレット</h3>
+                    <p>
+                        一部の黒背景ターミナルにおいて、視認性が著しく低下する「ブルー
+                        /
+                        シアン」系統の色を徹底的に排除しています。配色はシンプルかつ明瞭な色構成に制限されています：
+                    </p>
+                    <ul
+                        style="
+                            margin-top: 1rem;
+                            padding-left: 1.2rem;
+                            font-size: 0.9rem;
+                            color: #ccc;
+                        "
+                    >
+                        <li>白背景 ＋ 黒文字（通常ステータス、プロンプト）</li>
+                        <li>赤背景 ＋ 白文字（エラー、警告表示）</li>
+                        <li>黄色太字（ファイルブラウザ内のディレクトリ名）</li>
+                        <li>ダークグレー（行番号、非フォーカス枠）</li>
+                    </ul>
+                </div>
+            </div>
+
+            <section style="margin-bottom: 3rem">
+                <h2
+                    style="
+                        color: var(--accent-yellow);
+                        margin-bottom: 1rem;
+                        border-left: 4px solid var(--accent-yellow);
+                        padding-left: 0.5rem;
+                    "
+                >
+                    エラー表示の挙動
+                </h2>
+                <p>
+                    ファイル保存の失敗や検索不一致などのエラーが発生した場合、ステータスバーが自動で「赤背景」に変化します。
+                </p>
+                <div class="error-callout">
+                    [ERROR] File could not be saved. /
+                    ファイルを保存できません。
+                </div>
+                <p>
+                    このエラー表示は、何か次のキーが入力された瞬間に自動でクリアされる設計になっており、古いエラーメッセージが画面に残り続ける煩わしさから解放されます。
+                </p>
+            </section>
+
+            <section style="margin-bottom: 3rem">
+                <h2
+                    style="
+                        color: var(--accent-red);
+                        margin-bottom: 1rem;
+                        border-left: 4px solid var(--accent-red);
+                        padding-left: 0.5rem;
+                    "
+                >
+                    既知の制限 (未実装の機能)
+                </h2>
+                <p>
+                    現時点で、以下の一般的なテキストエディタ機能は実装されていません。これらは既存の
+                    <code>editor.rs</code>
+                    アーキテクチャの上に、必要に応じて拡張可能です。
+                </p>
+                <ul
+                    style="
+                        margin: 1.5rem 0;
+                        padding-left: 1.5rem;
+                        line-height: 2;
+                    "
+                >
+                    <li>マルチバッファ / タブ表示</li>
+                    <li>シンタックスハイライト</li>
+                    <li>アンドゥ (元に戻す) / リドゥ (やり直す)</li>
+                    <li>
+                        コピー用のテキスト範囲選択 (行全体の切り取り
+                        <kbd>Ctrl+K</kbd> / 貼り付け <kbd>Ctrl+U</kbd> のみ対応)
+                    </li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>&copy; 2026 CirPath Project. Built with Rust.</footer>
+    </body>
+</html>
