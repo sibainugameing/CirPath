@@ -1,206 +1,616 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>CirPath - Minimalist Rust TUI Text Editor</title>
-        <link rel="stylesheet" href="style.css" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;600;800&display=swap"
-            rel="stylesheet"
-        />
-    </head>
-    <body>
-        <header class="navbar">
-            <div class="container nav-container">
-                <a href="index.html" class="logo">
-                    <span class="logo-accent">>_</span> CirPath
-                </a>
-                <nav class="nav-links">
-                    <a href="index.html" class="active">ホーム</a>
-                    <a href="docs.html">ドキュメント</a>
-                    <a
-                        href="https://github.com"
-                        target="_blank"
-                        class="btn btn-outline"
-                        >GitHub</a
-                    >
-                </nav>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CirPath - Rust TUI Text Editor</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #212529;
+            --sidebar-bg: #1e1e24;
+            --sidebar-text: #ffffff;
+            --sidebar-active: #3a3a45;
+            --content-bg: #ffffff;
+            --primary-color: #4a5568;
+            --accent-red: #dc3545;
+            --accent-yellow: #ffc107;
+            --border-color: #dee2e6;
+            --code-bg: #f1f3f5;
+            --tui-dark: #121212;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* サイドバーのスタイリング */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header span {
+            font-family: monospace;
+            background: #ffffff;
+            color: #000000;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 18px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background 0.2s;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .sidebar-item.active {
+            background-color: var(--sidebar-active);
+            color: #ffffff;
+            font-weight: 500;
+            border-left: 4px solid var(--accent-yellow);
+        }
+
+        .sidebar-footer {
+            padding: 15px 24px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* メインコンテンツエリア */
+        .main-content {
+            flex-grow: 1;
+            background-color: var(--content-bg);
+            overflow-y: auto;
+            padding: 40px 60px;
+        }
+
+        .page {
+            display: none;
+            max-width: 850px;
+            margin: 0 auto;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* タイポグラフィ */
+        h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            color: #1a202c;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        h2 {
+            font-size: 22px;
+            margin: 32px 0 16px 0;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: #4a5568;
+        }
+
+        /* コードブロック */
+        pre {
+            background-color: var(--tui-dark);
+            color: #ffffff;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            background-color: var(--code-bg);
+            color: #212529;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* テーブルスタイリング */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 30px 0;
+            font-size: 15px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        tr:hover {
+            background-color: rgba(0, 0, 0, 0.01);
+        }
+
+        /* コールアウト・ノート */
+        .note {
+            background-color: #fffaf0;
+            border-left: 4px solid var(--accent-yellow);
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .note p {
+            margin-bottom: 0;
+            font-size: 15px;
+            color: #744210;
+        }
+
+        .note-title {
+            font-weight: bold;
+            margin-bottom: 4px !important;
+            color: #744210;
+        }
+
+        /* カラーチップ表示用 */
+        .color-palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .color-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .color-preview {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .color-info {
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        /* リスト */
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+            color: #4a5568;
+            line-height: 1.7;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* レスポンシブ対応 */
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+            .sidebar-menu {
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px;
+            }
+            .sidebar-item {
+                padding: 8px 16px;
+            }
+            .sidebar-item.active {
+                border-left: none;
+                border-bottom: 3px solid var(--accent-yellow);
+            }
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 左側サイドバーナビゲーション -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span>💾</span> CirPath
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item active" onclick="switchPage('home')">🏠 ホーム (Home)</li>
+            <li class="sidebar-item" onclick="switchPage('editor')">📝 エディタ画面</li>
+            <li class="sidebar-item" onclick="switchPage('browser')">📁 ファイルブラウザ</li>
+            <li class="sidebar-item" onclick="switchPage('menu')">⚙️ メニューと設定</li>
+        </ul>
+        <div class="sidebar-footer">
+            CirPath Documentation &copy; 2026
+        </div>
+    </div>
+
+    <!-- メインコンテンツエリア -->
+    <div class="main-content">
+
+        <!-- ページ 1: ホーム -->
+        <section id="home" class="page active">
+            <h1>CirPath</h1>
+            <p><strong>CirPath</strong> は、<code>nano</code> や <code>pico</code> にインスパイアされた、Rust製のTUI（ターミナルユーザーインターフェース）テキストエディタです。</p>
+            <p>エディタ、ファイルブラウザ、メニューの3つのウィンドウを1つのアプリに統合しており、<code>Ctrl+E</code> / <code>Ctrl+Q</code> でシームレスに切り替えることができます。枠線で囲まれた境界線はなく、<code>nano</code> のようにシンプルなタイトルバーと反転表示のステータスバーのみで無駄のないインターフェースが構築されています。</p>
+            <p>画面上のすべてのテキストはプレーンなASCIIまたは標準的な日本語（JIS範囲）文字を使用しており、絵文字や特殊な外字など環境に依存する文字を排除しています。表示言語は英語と日本語に完全対応し、メニュー画面からリアルタイムに切り替え可能です。</p>
+
+            <h2>🚀 ビルドと実行</h2>
+            <pre><code>cargo build --release
+./target/release/cirpath</code></pre>
+
+            <div class="note">
+                <p class="note-title">🛠️ ツールチェーンに関する注意事項</p>
+                <p>本プロジェクトは、最小要件として <strong>rustc 1.75 / cargo 1.75</strong> を対象としています。互換性を保つため、<code>Cargo.toml</code> にて依存関係のバージョンを厳密に固定しています（<code>ratatui = "=0.26.3"</code>, <code>crossterm = "=0.27.0"</code> など）。より新しいRustツールチェーンを使用している場合は、<code>cargo update</code> を実行してこれらの固定を安全に解除できます。</p>
             </div>
-        </header>
 
-        <section class="hero">
-            <div class="container hero-grid">
-                <div class="hero-content">
-                    <span class="badge">Inspired by nano & Built in Rust</span>
-                    <h1>
-                        機能美を極めた<br /><span class="gradient-text"
-                            >TUIテキストエディタ</span
-                        >
-                    </h1>
-                    <p class="hero-sub">
-                        CirPathは、Rustで書かれたシンプルかつエレガントなTUIテキストエディタ。極限まで無駄を削ぎ落とした「ボーダーレス」なデザインと、3つのウィンドウによる革新的な操作性を提供します。
-                    </p>
-                    <div class="hero-buttons">
-                        <a href="docs.html" class="btn btn-primary"
-                            >使ってみる</a
-                        >
-                        <a href="#quick-start" class="btn btn-secondary"
-                            >クイックスタート</a
-                        >
-                    </div>
+            <h2>🎨 カラーパレット</h2>
+            <p>UIは、黒背景のターミナルで視認性が低下しやすい青やシアン系の色を意図的に避けてデザインされています。</p>
+            <div class="color-palette-grid">
+                <div class="color-card">
+                    <div class="color-preview" style="background-color: #ffffff; color: #000000;">白 / 黒</div>
+                    <div class="color-info">通常ステータスバー、プロンプト、タイトルバー</div>
                 </div>
+                <div class="color-card">
+                    <div class="color-preview" style="background-color: #dc3545; color: #ffffff;">赤 / 白</div>
+                    <div class="color-info">エラーメッセージ、削除確認プロンプト</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview" style="background-color: #ffc107; color: #000000; font-weight: bold;">黄色 (太字)</div>
+                    <div class="color-info">ファイルブラウザ内のディレクトリエントリ</div>
+                </div>
+                <div class="color-card">
+                    <div class="color-preview" style="background-color: #6c757d; color: #ffffff;">ダークグレー</div>
+                    <div class="color-info">行番号、非フォーカス状態のメニューパネル</div>
+                </div>
+            </div>
 
-                <div class="terminal-mockup">
-                    <div class="terminal-header">
-                        <span class="dot red"></span>
-                        <span class="dot yellow"></span>
-                        <span class="dot green"></span>
-                        <span class="terminal-title">cirpath - editor.rs</span>
-                    </div>
-                    <div class="terminal-body">
-                        <div class="tui-window active-window">
-                            <div class="tui-title-bar">
-                                CirPath v1.0.0 - src/editor.rs
-                            </div>
-                            <div class="tui-content">
-                                <span class="ln">1</span>
-                                <span class="keyword">use</span> std::io::{<span
-                                    class="type"
-                                    >self</span
-                                >, Write};<br />
-                                <span class="ln">2</span>
-                                <span class="keyword">use</span>
-                                crossterm::event::{<span class="type">self</span
-                                >, Event, KeyCode};<br />
-                                <span class="ln">3</span> <br />
-                                <span class="ln">4</span>
-                                <span class="keyword">pub struct</span>
-                                <span class="class">Editor</span> {<br />
-                                <span class="ln">5</span> buffer:
-                                <span class="type">Vec</span>&lt;<span
-                                    class="type"
-                                    >String</span
-                                >&gt;,<br />
-                                <span class="ln">6</span> cursor_x:
-                                <span class="type">usize</span>,<br />
-                                <span class="ln">7</span> cursor_y:
-                                <span class="type">usize</span>,<br />
-                                <span class="ln">8</span> }<br />
-                                <span class="ln">9</span> <br />
-                                <span class="ln">10</span
-                                ><span class="comment"
-                                    >// Ctrl+E
-                                    を押してファイルブラウザへ切り替え...</span
-                                ><br />
-                                <span class="ln">11</span
-                                ><span class="cursor"> </span>
-                            </div>
-                            <div class="tui-status-bar">
-                                <span>[Editor] editor.rs (11L, 245C)</span>
-                                <span>Ctrl+E: 次の窓 | Ctrl+Q: 前の窓</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <h2>⚠️ 現在の制限事項</h2>
+            <p>以下の機能は現時点では未実装ですが、既存の <code>editor.rs</code> の構造の上にスムーズに追加できるように設計されています。</p>
+            <ul>
+                <li>複数バッファ / タブ表示</li>
+                <li>シンタックスハイライト</li>
+                <li>元に戻す (Undo) / やり直し (Redo)</li>
+                <li>コピー用のテキスト選択（マーク） - <em>現時点では行全体の切り取り/貼り付け（<code>Ctrl+K</code> / <code>Ctrl+U</code>）のみ対応</em></li>
+            </ul>
+        </section>
+
+        <!-- ページ 2: エディタ -->
+        <section id="editor" class="page">
+            <h1>エディタ画面</h1>
+            <p>エディタの下部には、従来の <code>nano</code> や <code>UW PICO</code> のスタイルを踏襲した「2行×6列のショートカットグリッド」が常時表示されます。これにより、利用可能なコマンドが常に一目で確認できます。</p>
+
+            <h2>🌐 グローバル操作（全画面共通）</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">キー</th>
+                        <th>アクション</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Ctrl+E</code></td>
+                        <td>次のウィンドウへ切り替え（エディタ → ブラウザ → メニュー → エディタ... のサイクル）</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+Q</code></td>
+                        <td>前のウィンドウへ切り替え</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+G</code></td>
+                        <td>ヘルプを表示（メニュー内の「キーバインド」カテゴリへダイレクトにジャンプ）</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>📝 エディタ操作（nano互換機能）</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">キー</th>
+                        <th>アクション</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>表示可能文字</td>
+                        <td>カーソル位置に文字を挿入（日本語等のIME入力の確定処理はOS側で完全に処理されます）</td>
+                    </tr>
+                    <tr>
+                        <td><code>Enter</code></td>
+                        <td>改行を挿入</td>
+                    </tr>
+                    <tr>
+                        <td><code>Backspace</code> / <code>Delete</code></td>
+                        <td>カーソルの前、またはカーソル位置の文字を削除（行の境界を越えた結合に対応）</td>
+                    </tr>
+                    <tr>
+                        <td>矢印キー / <code>Home</code> / <code>End</code></td>
+                        <td>カーソルを移動</td>
+                    </tr>
+                    <tr>
+                        <td><code>Page Up</code> / <code>Page Down</code></td>
+                        <td>ページ単位でスクロール移動</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+S</code></td>
+                        <td>ファイルを上書き保存</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+O</code></td>
+                        <td>名前を付けて保存 - ファイル名入力プロンプトを表示 (Write Out)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+R</code></td>
+                        <td>カーソル位置に別ファイルの内容を挿入 (Read File)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+W</code></td>
+                        <td>検索 (Where Is)。空のプロンプトでEnterを押すと前回の検索をリピートします</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+\</code></td>
+                        <td>置換 - 検索文字列と置換文字列を入力し、すべての一致箇所を置換</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+_</code></td>
+                        <td>指定した行番号へジャンプ</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+K</code></td>
+                        <td>現在の行を切り取り（連続して押すと1つのクリップボードバッファに蓄積）</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+U</code></td>
+                        <td>最後に切り取ったテキストをカーソル位置に貼り付け (UnCut)</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+C</code></td>
+                        <td>現在のカーソル位置（行/列）と合計行数をステータスバーに表示</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+X</code></td>
+                        <td>終了 - 未保存の変更がある場合は確認プロンプトを表示</td>
+                    </tr>
+                    <tr>
+                        <td><code>Esc</code></td>
+                        <td>実行中のプロンプトをキャンセル（検索・置換・保存・行移動・ファイル挿入時）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- ページ 3: ファイルブラウザ -->
+        <section id="browser" class="page">
+            <h1>ファイルブラウザ画面</h1>
+            <p>内蔵のファイルブラウザを使用することで、ディレクトリの移動やファイル・フォルダの作成・削除をエディタを閉じることなくスムーズに行えます。</p>
+            <p>項目数が膨大なディレクトリでも、選択項目が常に画面内に収まるようリストが自動的にスクロールします。</p>
+
+            <h2>📁 ファイルブラウザ操作</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">キー</th>
+                        <th>アクション</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Up</code> / <code>Down</code></td>
+                        <td>選択項目の移動</td>
+                    </tr>
+                    <tr>
+                        <td><code>Enter</code> / <code>Right</code></td>
+                        <td>選択したディレクトリに入る、または選択したファイルをエディタで開く</td>
+                    </tr>
+                    <tr>
+                        <td><code>Backspace</code> / <code>Left</code> / <code>u</code></td>
+                        <td>1つ上の親ディレクトリへ移動</td>
+                    </tr>
+                    <tr>
+                        <td><code>g</code></td>
+                        <td>絶対パスまたは相対パスを手動入力して直接ジャンプ（起動時のディレクトリ外も移動可能）</td>
+                    </tr>
+                    <tr>
+                        <td><code>n</code></td>
+                        <td>現在のディレクトリに新しいファイルを作成</td>
+                    </tr>
+                    <tr>
+                        <td><code>N</code> (Shift+n)</td>
+                        <td>現在のディレクトリに新しいフォルダを作成</td>
+                    </tr>
+                    <tr>
+                        <td><code>r</code></td>
+                        <td>選択中のファイルまたはフォルダの名前を変更</td>
+                    </tr>
+                    <tr>
+                        <td><code>d</code></td>
+                        <td>選択中のファイルまたはフォルダを削除（実行前に <code>y</code>/<code>n</code> の確認プロンプトを表示）</td>
+                    </tr>
+                    <tr>
+                        <td><code>Ctrl+H</code></td>
+                        <td>隠しファイル（ドットファイル）の表示 / 非表示を切り替え</td>
+                    </tr>
+                    <tr>
+                        <td><code>Esc</code></td>
+                        <td>実行中のプロンプトをキャンセル（パス入力・新規作成・名前変更時）</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="note">
+                <p class="note-title">💡 便利なデフォルト機能</p>
+                <p>メニュー設定の<strong>「ファイル選択時にエディタへ自動切り替え (Auto-switch to editor when a file is selected)」</strong>が有効な場合（デフォルト）、ブラウザでファイルを選択してEnterを押すと、自動的にフォーカスがエディタ画面へと移行します。</p>
             </div>
         </section>
 
-        <section class="features">
-            <div class="container">
-                <h2 class="section-title">なぜ CirPath なのか？</h2>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon">📐</div>
-                        <h3>3つのシームレスな窓</h3>
-                        <p>
-                            <strong>Editor</strong>、<strong
-                                >File Browser</strong
-                            >、<strong>Menu</strong> の3面構造。<code
-                                >Ctrl+E</code
-                            >
-                            /
-                            <code>Ctrl+Q</code>
-                            で視覚的・直感的に高速切り替えが可能。
-                        </p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">✨</div>
-                        <h3>徹底したミニマリズム</h3>
-                        <p>
-                            nanoにインスパイアされた、罫線（ボーダー）のない極限デザイン。タイトルバーと反転色のステータスバーのみで画面を広く使えます。
-                        </p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-icon">🌐</div>
-                        <h3>環境非依存 & 多言語対応</h3>
-                        <p>
-                            絵文字を排除し、JIS規格文字とASCIIのみで構築。崩れる心配はありません。さらに英語・日本語をメニューから即時変更可能。
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <!-- ページ 4: メニューと設定 -->
+        <section id="menu" class="page">
+            <h1>メニューと設定画面</h1>
+            <p>Wordスタイルにインスパイアされた「2ペイン構成」の設定画面を提供します。左側にカテゴリ、右側に詳細設定項目が並ぶ直感的なレイアウトです。</p>
+            <p>メニューから変更した設定は即座にアプリケーションに反映され、自動的に <code>~/.config/cirpath/config.toml</code> へ保存・永続化されます。</p>
+
+            <h2>⚙️ メニュー画面の操作</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">キー</th>
+                        <th>アクション</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>Left</code> / <code>Right</code></td>
+                        <td>左ペイン（カテゴリ選択）と右ペイン（設定詳細）の間でフォーカスを切り替え</td>
+                    </tr>
+                    <tr>
+                        <td><code>Up</code> / <code>Down</code></td>
+                        <td>現在フォーカスされているペイン内での選択項目の移動</td>
+                    </tr>
+                    <tr>
+                        <td><code>Enter</code></td>
+                        <td>左ペインからは右ペインへ移動。右ペインからは選択した設定の適用・トグル切り替え</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>📂 提供されているカテゴリ</h2>
+            <ul>
+                <li><strong>General (一般):</strong> 表示言語の切り替えなどを行う基本設定</li>
+                <li><strong>Editor (エディタ):</em></strong> エディタの挙動や表示に関する設定</li>
+                <li><strong>File Browser (ファイルブラウザ):</strong> ブラウザの動作やフィルタに関する設定</li>
+                <li><strong>Key Bindings (キーバインド):</strong> すべてのショートカットキーを確認できる完全なリファレンス</li>
+                <li><strong>Config File (設定ファイル):</strong> <code>config.toml</code> をエディタで直接開き、手動で細かく編集可能</li>
+                <li><strong>About (概要):</strong> アプリケーションのバージョン情報やクレジット</li>
+            </ul>
+
+            <h2>🌍 完全な多言語サポート</h2>
+            <p>CirPathは英語と日本語の完全なローカライズ文字列を内蔵しています。ウィンドウタイトル、ステータス、エラー、プロンプトはもちろん、メニューの項目やエディタ最下部のショートカットグリッドに至るまで瞬時に切り替わります。設定は <strong>Menu -> General -> "Switch display language"</strong> から即座に変更可能です。</p>
+
+            <h2>🛠️ 開発者向け：機能の拡張方法</h2>
+            <p>新しい機能を追加する場合は、該当する画面のモジュール（<code>editor.rs</code> / <code>browser.rs</code> / <code>menu.rs</code>）を拡張し、新しい設定項目を <code>Config</code> 構造体へ定義した上で、<code>menu.rs</code> 内の <code>items_for</code> および <code>apply_selection</code> に処理を組み込みます。各画面モジュールは疎結合で自己完結しているため、通常は他のモジュールに影響を与えることなく機能拡張が行えます。</p>
         </section>
 
-        <section id="quick-start" class="setup-section">
-            <div class="container">
-                <div class="setup-grid">
-                    <div>
-                        <h2>ビルドと実行</h2>
-                        <p>
-                            Rust環境があれば、数秒で最強の軽量エディタがあなたのターミナルに。依存関係に縛られないネイティブスピードを体感してください。
-                        </p>
-                        <div class="code-block-container">
-                            <div class="code-header">
-                                <span>Bash</span>
-                                <button
-                                    class="copy-btn"
-                                    onclick="
-                                        navigator.clipboard.writeText(
-                                            'cargo build --release\n./target/release/cirpath',
-                                        )
-                                    "
-                                >
-                                    Copy
-                                </button>
-                            </div>
-                            <pre><code><span class="cmd">cargo</span> build --release
-<span class="cmd">./target/release/cirpath</span></code></pre>
-                        </div>
-                    </div>
-                    <div class="arch-info">
-                        <h2>拡張性の高い設計</h2>
-                        <p>
-                            各スクリーンはモジュールとして完全に独立。新機能の追加も既存モジュールを破壊しません。
-                        </p>
-                        <div class="modules-blueprint">
-                            <div class="blueprint-item">
-                                <code>editor.rs</code>
-                                <span class="arrow">→</span>
-                                エディタ描画とテキスト入力制御
-                            </div>
-                            <div class="blueprint-item">
-                                <code>browser.rs</code>
-                                <span class="arrow">→</span>
-                                高速ファイルシステム探索
-                            </div>
-                            <div class="blueprint-item">
-                                <code>menu.rs</code>
-                                <span class="arrow">→</span>
-                                設定とキーバインド一覧
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    </div>
 
-        <footer>
-            <div class="container footer-content">
-                <p>&copy; 2026 CirPath Project. Designed with Rust Passion.</p>
-            </div>
-        </footer>
-    </body>
+    <!-- JavaScript によるページ切り替え制御 -->
+    <script>
+        function switchPage(pageId) {
+            // すべてのページを非表示にする
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+
+            // すべてのメニューアイテムのアクティブ状態を解除
+            const menuItems = document.querySelectorAll('.sidebar-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            // 対象のページを表示
+            const activePage = document.getElementById(pageId);
+            if (activePage) {
+                activePage.classList.add('active');
+            }
+
+            // クリックされたメニューアイテムをアクティブにする
+            // onclick属性の引数から対応する要素を特定
+            const eventTarget = window.event ? window.event.currentTarget : null;
+            if (eventTarget) {
+                eventTarget.classList.add('active');
+            } else {
+                // フォールバック（イベントオブジェクトがない場合など）
+                const targetIndex = ['home', 'editor', 'browser', 'menu'].indexOf(pageId);
+                if (targetIndex !== -1 && menuItems[targetIndex]) {
+                    menuItems[targetIndex].classList.add('active');
+                }
+            }
+
+            // コンテンツエリアのスクロール位置をトップに戻す
+            document.querySelector('.main-content').scrollTop = 0;
+        }
+    </script>
+</body>
 </html>
