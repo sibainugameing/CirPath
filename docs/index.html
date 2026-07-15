@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CirPath - Minimalist Rust TUI Text Editor</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;600;800&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <header class="navbar">
+            <div class="container nav-container">
+                <a href="index.html" class="logo">
+                    <span class="logo-accent">>_</span> CirPath
+                </a>
+                <nav class="nav-links">
+                    <a href="index.html" class="active">ホーム</a>
+                    <a href="docs.html">ドキュメント</a>
+                    <a
+                        href="https://github.com"
+                        target="_blank"
+                        class="btn btn-outline"
+                        >GitHub</a
+                    >
+                </nav>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <span class="badge">Inspired by nano & Built in Rust</span>
+                    <h1>
+                        機能美を極めた<br /><span class="gradient-text"
+                            >TUIテキストエディタ</span
+                        >
+                    </h1>
+                    <p class="hero-sub">
+                        CirPathは、Rustで書かれたシンプルかつエレガントなTUIテキストエディタ。極限まで無駄を削ぎ落とした「ボーダーレス」なデザインと、3つのウィンドウによる革新的な操作性を提供します。
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="docs.html" class="btn btn-primary"
+                            >使ってみる</a
+                        >
+                        <a href="#quick-start" class="btn btn-secondary"
+                            >クイックスタート</a
+                        >
+                    </div>
+                </div>
+
+                <div class="terminal-mockup">
+                    <div class="terminal-header">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                        <span class="terminal-title">cirpath - editor.rs</span>
+                    </div>
+                    <div class="terminal-body">
+                        <div class="tui-window active-window">
+                            <div class="tui-title-bar">
+                                CirPath v1.0.0 - src/editor.rs
+                            </div>
+                            <div class="tui-content">
+                                <span class="ln">1</span>
+                                <span class="keyword">use</span> std::io::{<span
+                                    class="type"
+                                    >self</span
+                                >, Write};<br />
+                                <span class="ln">2</span>
+                                <span class="keyword">use</span>
+                                crossterm::event::{<span class="type">self</span
+                                >, Event, KeyCode};<br />
+                                <span class="ln">3</span> <br />
+                                <span class="ln">4</span>
+                                <span class="keyword">pub struct</span>
+                                <span class="class">Editor</span> {<br />
+                                <span class="ln">5</span> buffer:
+                                <span class="type">Vec</span>&lt;<span
+                                    class="type"
+                                    >String</span
+                                >&gt;,<br />
+                                <span class="ln">6</span> cursor_x:
+                                <span class="type">usize</span>,<br />
+                                <span class="ln">7</span> cursor_y:
+                                <span class="type">usize</span>,<br />
+                                <span class="ln">8</span> }<br />
+                                <span class="ln">9</span> <br />
+                                <span class="ln">10</span
+                                ><span class="comment"
+                                    >// Ctrl+E
+                                    を押してファイルブラウザへ切り替え...</span
+                                ><br />
+                                <span class="ln">11</span
+                                ><span class="cursor"> </span>
+                            </div>
+                            <div class="tui-status-bar">
+                                <span>[Editor] editor.rs (11L, 245C)</span>
+                                <span>Ctrl+E: 次の窓 | Ctrl+Q: 前の窓</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">なぜ CirPath なのか？</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📐</div>
+                        <h3>3つのシームレスな窓</h3>
+                        <p>
+                            <strong>Editor</strong>、<strong
+                                >File Browser</strong
+                            >、<strong>Menu</strong> の3面構造。<code
+                                >Ctrl+E</code
+                            >
+                            /
+                            <code>Ctrl+Q</code>
+                            で視覚的・直感的に高速切り替えが可能。
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">✨</div>
+                        <h3>徹底したミニマリズム</h3>
+                        <p>
+                            nanoにインスパイアされた、罫線（ボーダー）のない極限デザイン。タイトルバーと反転色のステータスバーのみで画面を広く使えます。
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌐</div>
+                        <h3>環境非依存 & 多言語対応</h3>
+                        <p>
+                            絵文字を排除し、JIS規格文字とASCIIのみで構築。崩れる心配はありません。さらに英語・日本語をメニューから即時変更可能。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="quick-start" class="setup-section">
+            <div class="container">
+                <div class="setup-grid">
+                    <div>
+                        <h2>ビルドと実行</h2>
+                        <p>
+                            Rust環境があれば、数秒で最強の軽量エディタがあなたのターミナルに。依存関係に縛られないネイティブスピードを体感してください。
+                        </p>
+                        <div class="code-block-container">
+                            <div class="code-header">
+                                <span>Bash</span>
+                                <button
+                                    class="copy-btn"
+                                    onclick="
+                                        navigator.clipboard.writeText(
+                                            'cargo build --release\n./target/release/cirpath',
+                                        )
+                                    "
+                                >
+                                    Copy
+                                </button>
+                            </div>
+                            <pre><code><span class="cmd">cargo</span> build --release
+<span class="cmd">./target/release/cirpath</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="arch-info">
+                        <h2>拡張性の高い設計</h2>
+                        <p>
+                            各スクリーンはモジュールとして完全に独立。新機能の追加も既存モジュールを破壊しません。
+                        </p>
+                        <div class="modules-blueprint">
+                            <div class="blueprint-item">
+                                <code>editor.rs</code>
+                                <span class="arrow">→</span>
+                                エディタ描画とテキスト入力制御
+                            </div>
+                            <div class="blueprint-item">
+                                <code>browser.rs</code>
+                                <span class="arrow">→</span>
+                                高速ファイルシステム探索
+                            </div>
+                            <div class="blueprint-item">
+                                <code>menu.rs</code>
+                                <span class="arrow">→</span>
+                                設定とキーバインド一覧
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container footer-content">
+                <p>&copy; 2026 CirPath Project. Designed with Rust Passion.</p>
+            </div>
+        </footer>
+    </body>
+</html>

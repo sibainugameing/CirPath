@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CirPath - ドキュメント & 操作一覧</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;600;800&display=swap"
+            rel="stylesheet"
+        />
+    </head>
+    <body>
+        <header class="navbar">
+            <div class="container nav-container">
+                <a href="index.html" class="logo">
+                    <span class="logo-accent">>_</span> CirPath
+                </a>
+                <nav class="nav-links">
+                    <a href="index.html">ホーム</a>
+                    <a href="docs.html" class="active">ドキュメント</a>
+                    <a
+                        href="https://github.com"
+                        target="_blank"
+                        class="btn btn-outline"
+                        >GitHub</a
+                    >
+                </nav>
+            </div>
+        </header>
+
+        <main class="container doc-layout">
+            <aside class="sidebar">
+                <div class="sidebar-box">
+                    <h3>目次</h3>
+                    <ul>
+                        <li><a href="#global">グローバルコントロール</a></li>
+                        <li><a href="#editor">エディタ操作</a></li>
+                        <li><a href="#browser">ファイルブラウザ</a></li>
+                        <li><a href="#menu">メニュー構成</a></li>
+                        <li><a href="#errors">エラーハンドリング</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <article class="doc-content">
+                <h1 class="page-title">操作ドキュメント</h1>
+                <p class="lead-text">
+                    CirPathはキーボードショートカットを巧みに使うことで、思考を妨げずにすべての操作を行えます。
+                </p>
+
+                <hr class="divider" />
+
+                <section id="global" class="doc-section">
+                    <h2>グローバルコントロール</h2>
+                    <p>
+                        どの画面にいても機能する、CirPathの核となるウィンドウ切り替えコマンドです。
+                    </p>
+                    <div class="table-responsive">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>キーバインド</th>
+                                    <th>アクション内容</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>E</kbd></td>
+                                    <td>
+                                        次のウィンドウへ切り替え（Editor ➔ File
+                                        Browser ➔ Menu を巡回）
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>Q</kbd></td>
+                                    <td>前のウィンドウへ切り替え</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>G</kbd></td>
+                                    <td>
+                                        ヘルプを開く（メニューのショートカット一覧へ即座にアクセス）
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="editor" class="doc-section">
+                    <h2>エディタ操作</h2>
+                    <p>
+                        nanoの操作性をベースとし、強力な検索・置換・カットバッファ機能を備えています。
+                    </p>
+                    <div class="table-responsive">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>キーバインド</th>
+                                    <th>アクション内容</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>文字入力</td>
+                                    <td>
+                                        カーソル位置に文字を挿入
+                                        (OS側のIMEを介して日本語入力にも対応)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Enter</kbd></td>
+                                    <td>改行を挿入</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Backspace</kbd> / <kbd>Delete</kbd>
+                                    </td>
+                                    <td>
+                                        カーソルの前後の文字を削除
+                                        (行をまたいだ連結も可能)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd>
+                                        <kbd>→</kbd><br /><kbd>Home</kbd> /
+                                        <kbd>End</kbd><br /><kbd>PageUp</kbd> /
+                                        <kbd>PageDown</kbd>
+                                    </td>
+                                    <td>カーソルの移動</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>S</kbd></td>
+                                    <td>ファイルを保存 (上書き保存)</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>O</kbd></td>
+                                    <td>
+                                        名前を付けて保存 (Write Out;
+                                        ファイル名の入力を求められます)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>R</kbd></td>
+                                    <td>
+                                        カーソル位置に指定したファイルの内容を挿入
+                                        (Read File)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>W</kbd></td>
+                                    <td>
+                                        ファイル内検索 (Where
+                                        Is)。空欄でEnterを押すと前回の検索をリピート
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>\</kbd></td>
+                                    <td>
+                                        一括置換。検索文字列に続き、置換後文字列を入力して全一致箇所を置換
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>_</kbd></td>
+                                    <td>
+                                        指定した行番号へジャンプ (Go To Line)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>K</kbd></td>
+                                    <td>
+                                        現在の行をカット。連続してカットすると単一バッファに累積蓄積
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>U</kbd></td>
+                                    <td>
+                                        カットしたテキストを現在のカーソル位置に貼り付け
+                                        (Uncut)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>C</kbd></td>
+                                    <td>
+                                        現在のカーソル位置情報 (行/列)
+                                        および総行数をステータスに表示
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>X</kbd></td>
+                                    <td>
+                                        終了。未保存の変更がある場合は、もう一度押して確認後に終了
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Esc</kbd></td>
+                                    <td>
+                                        検索、置換、ファイル名入力などの各種プロンプト入力をキャンセル
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="browser" class="doc-section">
+                    <h2>ファイルブラウザ</h2>
+                    <p>
+                        ファイルブラウザからファイルを確定すると、デフォルトで自動的にエディタへ切り替わります（設定で変更可能）。
+                    </p>
+                    <div class="table-responsive">
+                        <table class="doc-table">
+                            <thead>
+                                <tr>
+                                    <th>キーバインド</th>
+                                    <th>アクション内容</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><kbd>↑</kbd> / <kbd>↓</kbd></td>
+                                    <td>アイテムを選択</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Enter</kbd> / <kbd>→</kbd></td>
+                                    <td>
+                                        選択したディレクトリに入る、または選択したファイルを開く
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>Backspace</kbd> / <kbd>←</kbd> /
+                                        <kbd>u</kbd>
+                                    </td>
+                                    <td>親ディレクトリへ移動</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>g</kbd></td>
+                                    <td>
+                                        絶対パス/相対パスを直接入力してジャンプ
+                                        (カレントディレクトリ外も可)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>n</kbd></td>
+                                    <td>新規ファイルの作成</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <kbd>N</kbd>
+                                        (<kbd>Shift</kbd>+<kbd>n</kbd>)
+                                    </td>
+                                    <td>新規ディレクトリの作成</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>r</kbd></td>
+                                    <td>選択しているアイテムの名前変更</td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>d</kbd></td>
+                                    <td>
+                                        選択しているアイテムの削除
+                                        (<kbd>y/n</kbd>の確認プロンプトにより誤動作を防止)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Ctrl</kbd> + <kbd>H</kbd></td>
+                                    <td>
+                                        ドットファイル(隠しファイル)の表示/非表示切り替え
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><kbd>Esc</kbd></td>
+                                    <td>
+                                        各種パス入力や名前変更プロンプトのキャンセル
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="menu" class="doc-section">
+                    <h2>メニューと設定ファイル</h2>
+                    <p>
+                        Wordライクな2ペイン構成のUIを採用。直感的な設定変更とTOMLファイルの直接編集が可能です。
+                    </p>
+
+                    <div class="menu-box">
+                        <div class="menu-tag">キー操作</div>
+                        <ul>
+                            <li>
+                                <strong><kbd>←</kbd> / <kbd>→</kbd></strong
+                                >:
+                                左側のカテゴリペインと右側の詳細ペインを切り替え
+                            </li>
+                            <li>
+                                <strong><kbd>↑</kbd> / <kbd>↓</kbd></strong
+                                >: 選択中ペイン内のアイテムを上下に移動
+                            </li>
+                            <li>
+                                <strong><kbd>Enter</kbd></strong
+                                >:
+                                左ペインから右ペインに遷移、または右ペインでオプションを選択/トグル
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="config-note">
+                        <h4>⚙️ 設定ファイルへのパス</h4>
+                        <p>
+                            メニューの「Configuration
+                            File」カテゴリから、TOMLファイル本体をエディタで開き直接変更することができます。設定は以下に即時反映・保存されます。
+                        </p>
+                        <pre class="path-block">
+~/.config/cirpath/config.toml</pre
+                        >
+                    </div>
+                </section>
+
+                <section id="errors" class="doc-section error-section">
+                    <h2>エラーメッセージの設計</h2>
+                    <div class="error-visual">
+                        <div class="status-bar-mockup error-bg">
+                            Error: File 'invalid_path.txt' does not exist!
+                        </div>
+                    </div>
+                    <p>
+                        存在しないパスへの移動、保存失敗、検索語未検出などのエラーは、上記のように<strong>赤背景のステータスバー</strong>に表示されます。
+                    </p>
+                    <blockquote>
+                        <strong>💡 スマートな自動クリア設計:</strong><br />
+                        エラーメッセージは、次に何らかのキーが入力された瞬間に自動消去されます。これにより古いエラー表示がいつまでも画面に残るノイズを防ぎ、快適なタイピング環境を維持します。
+                    </blockquote>
+                </section>
+            </article>
+        </main>
+
+        <footer>
+            <div class="container footer-content">
+                <p>&copy; 2026 CirPath Project. Designed with Rust Passion.</p>
+            </div>
+        </footer>
+    </body>
+</html>
