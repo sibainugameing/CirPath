@@ -1,13 +1,14 @@
 /* style.css */
 :root {
-    --bg-color: #121214;
-    --card-bg: #1a1a1e;
-    --text-color: #e0e0e0;
+    --bg-color: #0b0b0d;
+    --card-bg: #131316;
+    --text-color: #c5c5ca;
     --text-light: #ffffff;
     --accent-yellow: #ffcc00;
     --accent-red: #ff4d4d;
-    --border-color: #2d2d34;
+    --border-color: #26262b;
     --font-mono: "Courier New", Courier, monospace;
+    --terminal-green: #39ff14;
 }
 
 * {
@@ -16,17 +17,34 @@
     padding: 0;
 }
 
+/* Custom Scrollbar for Terminal Vibe */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0b0b0d;
+}
+::-webkit-scrollbar-thumb {
+    background: #26262b;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-yellow);
+}
+
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-        Arial, sans-serif;
+        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
+/* Header & Navigation */
 header {
-    background-color: #0a0a0c;
+    background-color: #060608;
     border-bottom: 2px solid var(--border-color);
     position: sticky;
     top: 0;
@@ -48,159 +66,427 @@ header {
     font-weight: bold;
     color: var(--accent-yellow);
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo::before {
+    content: ">";
+    color: var(--text-light);
+}
+
+/* Hamburger Menu Toggle */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background-color: var(--text-color);
+    transition: 0.3s;
 }
 
 nav ul {
     display: flex;
     list-style: none;
-    gap: 1.5rem;
+    gap: 2rem;
 }
 
 nav a {
     color: var(--text-color);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.2s;
+    font-family: var(--font-mono);
+    transition:
+        color 0.2s,
+        text-shadow 0.2s;
+    padding: 0.5rem 0;
 }
 
 nav a:hover,
 nav a.active {
     color: var(--accent-yellow);
+    text-shadow: 0 0 8px rgba(255, 204, 0, 0.4);
 }
 
+/* Main Container */
 main {
     max-width: 1100px;
     margin: 2rem auto;
     padding: 0 2rem;
-    min-height: calc(100vh - 160px);
+    min-height: calc(100vh - 200px);
 }
 
 /* Hero Section */
 .hero {
     text-align: center;
-    padding: 4rem 1rem;
+    padding: 5rem 1.5rem;
     background: radial-gradient(
         circle at center,
-        #1e1e24 0%,
+        #18181f 0%,
         var(--bg-color) 100%
     );
     border-radius: 8px;
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
     border: 1px solid var(--border-color);
+    position: relative;
 }
 
 .hero h1 {
     font-family: var(--font-mono);
-    font-size: 3rem;
+    font-size: 3.5rem;
     color: var(--text-light);
     margin-bottom: 1rem;
+    letter-spacing: -1px;
 }
 
 .hero p {
-    font-size: 1.25rem;
-    max-width: 700px;
-    margin: 0 auto 2rem auto;
-    color: #b0b0b5;
+    font-size: 1.3rem;
+    max-width: 750px;
+    margin: 0 auto 2.5rem auto;
+    color: #a0a0a5;
 }
 
+/* Buttons */
 .btn {
     display: inline-block;
     background-color: var(--accent-yellow);
     color: #000;
-    padding: 0.75rem 1.5rem;
+    padding: 0.8rem 2rem;
+    font-family: var(--font-mono);
     font-weight: bold;
     text-decoration: none;
     border-radius: 4px;
-    transition: opacity 0.2s;
+    transition:
+        transform 0.1s,
+        box-shadow 0.2s;
+    border: none;
+    cursor: pointer;
 }
 
 .btn:hover {
-    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 204, 0, 0.3);
 }
 
-/* Grid Layout */
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    margin-left: 1rem;
+}
+
+.btn-secondary:hover {
+    background-color: #16161a;
+    border-color: var(--accent-yellow);
+    box-shadow: none;
+}
+
+/* Grid System */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2rem;
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
 }
 
 .card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    padding: 1.5rem;
+    padding: 2rem;
+    transition: border-color 0.3s;
+}
+
+.card:hover {
+    border-color: #44444c;
 }
 
 .card h3 {
     color: var(--accent-yellow);
     margin-bottom: 1rem;
     font-family: var(--font-mono);
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-/* Code & Terminal Blocks */
-pre {
+/* Dynamic Interactive Terminal Simulator */
+.terminal-simulator {
     background-color: #000;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 3rem 0;
+    font-family: var(--font-mono);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.terminal-header {
+    background-color: #131316;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+}
+
+.terminal-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.terminal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #333;
+}
+
+.terminal-dot.red {
+    background-color: var(--accent-red);
+}
+.terminal-dot.yellow {
+    background-color: var(--accent-yellow);
+}
+.terminal-dot.green {
+    background-color: #28c93f;
+}
+
+.terminal-tabs {
+    display: flex;
+    gap: 0.2rem;
+}
+
+.terminal-tab-btn {
+    background: none;
+    border: none;
+    color: #777;
+    padding: 0.4rem 1rem;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: bold;
+    border-radius: 4px 4px 0 0;
+    transition: 0.2s;
+}
+
+.terminal-tab-btn:hover {
+    color: var(--text-light);
+}
+
+.terminal-tab-btn.active {
+    background-color: #1f1f24;
+    color: var(--accent-yellow);
+    border-bottom: 2px solid var(--accent-yellow);
+}
+
+.terminal-body {
+    padding: 1.5rem;
+    min-height: 280px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    background-color: #050507;
+    position: relative;
+}
+
+/* Simulated TUI Elements */
+.tui-title-bar {
+    background-color: #fff;
+    color: #000;
+    padding: 2px 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.tui-content {
+    min-height: 180px;
+    color: #e0e0e0;
+    white-space: pre-wrap;
+}
+
+.tui-line-nums {
+    color: #555;
+    user-select: none;
+    padding-right: 1rem;
+    border-right: 1px solid #222;
+    margin-right: 1rem;
+    text-align: right;
+    display: inline-block;
+}
+
+.tui-status-bar {
+    background-color: #fff;
+    color: #000;
+    padding: 2px 10px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tui-status-bar.error-msg {
+    background-color: var(--accent-red);
+    color: #fff;
+}
+
+.tui-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.5rem;
+    margin-top: 0.8rem;
+    font-size: 0.8rem;
+    border-top: 1px solid #222;
+    padding-top: 0.8rem;
+}
+
+.tui-shortcut-item {
+    color: var(--text-light);
+}
+
+.tui-shortcut-item span {
+    color: var(--accent-yellow);
+    font-weight: bold;
+}
+
+/* File Browser Mockup Specifics */
+.directory-entry {
+    color: var(--accent-yellow);
+    font-weight: bold;
+}
+
+.file-entry {
+    color: var(--text-color);
+}
+
+.selected-row {
+    background-color: #222;
+}
+
+/* Code block container with interactive copy button */
+.code-block-wrapper {
+    position: relative;
+    margin: 1.5rem 0;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #1f1f24;
+    color: var(--text-color);
     border: 1px solid var(--border-color);
-    padding: 1rem;
+    padding: 0.4rem 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.copy-btn:hover {
+    border-color: var(--accent-yellow);
+    color: var(--accent-yellow);
+}
+
+pre {
+    background-color: #050507;
+    border: 1px solid var(--border-color);
+    padding: 1.25rem;
     border-radius: 6px;
     overflow-x: auto;
-    margin: 1rem 0;
 }
 
 code {
     font-family: var(--font-mono);
     color: #a9ff94;
+    font-size: 0.95rem;
 }
 
-/* Tables */
+/* Interactive Search Bar for Docs */
+.search-container {
+    margin: 2rem 0;
+    position: relative;
+}
+
+.search-input {
+    width: 100%;
+    background-color: var(--card-bg);
+    border: 2px solid var(--border-color);
+    color: var(--text-light);
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: var(--font-mono);
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--accent-yellow);
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.15);
+}
+
+/* Keyboard Styling */
+kbd {
+    background-color: #25252a;
+    color: var(--text-light);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    border-bottom: 2px solid #141416;
+}
+
+/* Standard Tables */
 table {
     width: 100%;
     border-collapse: collapse;
     margin: 1.5rem 0;
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
 }
 
 th,
 td {
-    padding: 0.75rem 1rem;
+    padding: 1rem;
     text-align: left;
     border-bottom: 1px solid var(--border-color);
 }
 
 th {
-    background-color: #0a0a0c;
+    background-color: #0b0b0d;
     color: var(--accent-yellow);
     font-family: var(--font-mono);
+    font-weight: bold;
 }
 
 tr:hover {
-    background-color: #22222a;
+    background-color: #17171c;
 }
 
-kbd {
-    background-color: #333;
-    color: var(--text-light);
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    border-bottom: 2px solid #111;
+tr.hidden {
+    display: none !important;
 }
 
-/* Footer */
-footer {
-    background-color: #0a0a0c;
-    border-top: 1px solid var(--border-color);
-    text-align: center;
-    padding: 2rem;
-    color: #777;
-    font-size: 0.9rem;
-}
-
-/* Error Alert Style */
+/* Special Alert and Color Blocks */
 .error-callout {
     background-color: var(--accent-red);
     color: white;
@@ -208,4 +494,75 @@ footer {
     border-radius: 6px;
     margin: 1.5rem 0;
     font-weight: bold;
+    font-family: var(--font-mono);
+}
+
+.color-palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.color-box {
+    padding: 1rem;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-weight: bold;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+}
+
+/* Footer styling */
+footer {
+    background-color: #060608;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    padding: 2.5rem;
+    color: #61616a;
+    font-size: 0.9rem;
+    font-family: var(--font-mono);
+}
+
+/* Mobile Responsiveness Rules */
+@media (max-width: 768px) {
+    .nav-container {
+        position: relative;
+        padding: 1rem;
+    }
+    .menu-toggle {
+        display: flex;
+    }
+    nav ul {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: #060608;
+        border-bottom: 2px solid var(--border-color);
+        padding: 1rem 2rem;
+        gap: 1rem;
+    }
+    nav ul.active {
+        display: flex;
+    }
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    .hero p {
+        font-size: 1.1rem;
+    }
+    .tui-shortcuts {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.4rem;
+    }
+    .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    .btn-secondary {
+        margin-left: 0;
+    }
 }

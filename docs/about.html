@@ -3,15 +3,24 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Specs & Limitations - CirPath</title>
+        <title>Specs & Limits - CirPath</title>
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
         <header>
             <div class="nav-container">
-                <a href="index.html" class="logo">> CirPath</a>
+                <a href="index.html" class="logo">CirPath</a>
+                <button
+                    class="menu-toggle"
+                    id="menu-toggle"
+                    aria-label="Toggle navigation menu"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
                 <nav>
-                    <ul>
+                    <ul id="nav-links">
                         <li><a href="index.html">Home</a></li>
                         <li><a href="docs.html">Controls</a></li>
                         <li>
@@ -32,92 +41,153 @@
                     color: var(--text-light);
                 "
             >
-                Specifications & Limitations
+                Technical Specifications
             </h1>
 
             <div class="grid">
                 <div class="card">
-                    <h3>Bilingual Support</h3>
+                    <h3>Bilingual localization</h3>
                     <p>
-                        CirPath ships with complete English and Japanese
-                        translations for every visible string: window titles,
-                        status messages, error prompts, menus, key-binding
-                        references, and the editor's shortcut grid. You can
-                        switch display languages instantly from
-                        <strong>Menu -> General</strong>.
+                        CirPath ships with full, flawless bilingual English and
+                        standard Japanese translations embedded locally. TUI
+                        shortcut helpers switch languages seamlessly on-the-fly
+                        without restarting sessions.
                     </p>
                 </div>
-
                 <div class="card">
-                    <h3>High-Contrast Color Palette</h3>
+                    <h3>Rust Stability Pinned</h3>
                     <p>
-                        The UI intentionally avoids blue/cyan tones, which are
-                        often hard to read on dark terminal background schemes.
-                        The palette is carefully restricted to:
+                        Dependencies such as
+                        <code>ratatui = "=0.26.3"</code> are strictly pinned in
+                        order to guarantee flawless compile results under legacy
+                        and modern configurations alike.
                     </p>
-                    <ul
-                        style="
-                            margin-top: 1rem;
-                            padding-left: 1.2rem;
-                            font-size: 0.9rem;
-                            color: #ccc;
-                        "
-                    >
-                        <li>
-                            White background + black text (normal status bars,
-                            prompts, title bar)
-                        </li>
-                        <li>
-                            Red background + white text (error messages,
-                            delete-confirmations)
-                        </li>
-                        <li>Yellow (bold) (directories in the File Browser)</li>
-                        <li>Dark gray (line numbers, unfocused menu panels)</li>
-                    </ul>
                 </div>
             </div>
 
-            <section style="margin-bottom: 3rem">
+            <section style="margin-bottom: 3.5rem">
                 <h2
                     style="
                         color: var(--accent-yellow);
                         margin-bottom: 1rem;
                         border-left: 4px solid var(--accent-yellow);
                         padding-left: 0.5rem;
+                        font-family: var(--font-mono);
                     "
                 >
-                    Error Display Behavior
+                    Optimized Terminal Palette
                 </h2>
-                <p>
-                    Errors (such as failed saves or unsuccessful searches) are
-                    clearly flagged in the status bar with an unmistakable red
-                    background color.
+                <p style="margin-bottom: 1.5rem">
+                    To maintain clean contrast levels on every configuration,
+                    the TUI rejects problematic default terminal shades (such as
+                    unreadable dark blues) and is restricted to these
+                    high-contrast colors:
                 </p>
-                <div class="error-callout">
-                    [ERROR] File could not be saved.
+
+                <div class="color-palette-grid">
+                    <div
+                        class="color-box"
+                        style="background-color: #ffffff; color: #000000"
+                    >
+                        White Background + Black Text<br />
+                        <span
+                            style="
+                                font-size: 0.8rem;
+                                opacity: 0.8;
+                                font-weight: normal;
+                            "
+                            >Normal status, Title, Prompts</span
+                        >
+                    </div>
+                    <div
+                        class="color-box"
+                        style="
+                            background-color: var(--accent-red);
+                            color: #ffffff;
+                        "
+                    >
+                        Red Background + White Text<br />
+                        <span
+                            style="
+                                font-size: 0.8rem;
+                                opacity: 0.8;
+                                font-weight: normal;
+                            "
+                            >Errors, confirmations</span
+                        >
+                    </div>
+                    <div
+                        class="color-box"
+                        style="
+                            background-color: #131316;
+                            color: var(--accent-yellow);
+                        "
+                    >
+                        Bold Yellow Text<br />
+                        <span
+                            style="
+                                font-size: 0.8rem;
+                                opacity: 0.8;
+                                font-weight: normal;
+                            "
+                            >Directory items</span
+                        >
+                    </div>
+                    <div
+                        class="color-box"
+                        style="background-color: #131316; color: #55555c"
+                    >
+                        Dark Gray Colors<br />
+                        <span
+                            style="
+                                font-size: 0.8rem;
+                                opacity: 0.8;
+                                font-weight: normal;
+                            "
+                            >Line indexes, unfocused areas</span
+                        >
+                    </div>
                 </div>
-                <p>
-                    Any subsequent keystroke automatically clears the message
-                    instantly, ensuring stale errors never linger on your screen
-                    and disrupt your workspace.
-                </p>
             </section>
 
-            <section style="margin-bottom: 3rem">
+            <section style="margin-bottom: 3.5rem">
+                <h2
+                    style="
+                        color: var(--accent-yellow);
+                        margin-bottom: 1rem;
+                        border-left: 4px solid var(--accent-yellow);
+                        padding-left: 0.5rem;
+                        font-family: var(--font-mono);
+                    "
+                >
+                    Transient Error Display
+                </h2>
+                <p style="margin-bottom: 1rem">
+                    Failed directory paths or search failures instantly color
+                    target status bars red. This prompt remains present only
+                    until you press another key, keeping your viewport clean.
+                </p>
+                <div class="error-callout">
+                    [ERROR] Directory target /usr/bin/restricted does not exist.
+                </div>
+            </section>
+
+            <section style="margin-bottom: 2rem">
                 <h2
                     style="
                         color: var(--accent-red);
                         margin-bottom: 1rem;
                         border-left: 4px solid var(--accent-red);
                         padding-left: 0.5rem;
+                        font-family: var(--font-mono);
                     "
                 >
-                    Known Limitations
+                    Design Limitations
                 </h2>
                 <p>
-                    To keep the application highly performant and codebase
-                    structured, the following advanced editing features are
-                    currently <strong>not</strong> implemented:
+                    CirPath keeps operations robust and modular by leaving out
+                    complex features that clutter terminal real estate. The
+                    following functions are omitted but easily expandable:
                 </p>
                 <ul
                     style="
@@ -126,23 +196,24 @@
                         line-height: 2;
                     "
                 >
-                    <li>Multiple buffers / Tabbed editing</li>
-                    <li>Syntax highlighting</li>
-                    <li>Undo / Redo operations</li>
                     <li>
-                        Text selection (marking) for copy - only whole-line
-                        cut/paste (<kbd>Ctrl+K</kbd> / <kbd>Ctrl+U</kbd>) is
-                        supported
+                        Multiple editor frame buffer sessions or tab setups.
+                    </li>
+                    <li>
+                        Heavy real-time language syntax color configurations.
+                    </li>
+                    <li>Undo / redo state management configurations.</li>
+                    <li>
+                        Character selection ranges (Clipboard actions focus
+                        strictly on whole lines with <kbd>Ctrl+K</kbd> &
+                        <kbd>Ctrl+U</kbd>).
                     </li>
                 </ul>
-                <p>
-                    These features are straightforward to add on top of the
-                    existing <code>editor.rs</code> structure if needed as the
-                    project scales.
-                </p>
             </section>
         </main>
 
         <footer>&copy; 2026 CirPath Project. Built with Rust.</footer>
+
+        <script src="app.js"></script>
     </body>
 </html>

@@ -9,9 +9,18 @@
     <body>
         <header>
             <div class="nav-container">
-                <a href="index.html" class="logo">> CirPath</a>
+                <a href="index.html" class="logo">CirPath</a>
+                <button
+                    class="menu-toggle"
+                    id="menu-toggle"
+                    aria-label="Toggle navigation menu"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
                 <nav>
-                    <ul>
+                    <ul id="nav-links">
                         <li><a href="index.html" class="active">Home</a></li>
                         <li><a href="docs.html">Controls</a></li>
                         <li><a href="about.html">Specs & Limits</a></li>
@@ -24,94 +33,176 @@
             <section class="hero">
                 <h1>CirPath</h1>
                 <p>
-                    A minimalist Rust TUI (terminal user interface) text editor
-                    inspired by nano and pico.
+                    An elegant, keyboard-driven Rust TUI text editor inspired by
+                    the timeless simplicity of nano and pico.
                 </p>
-                <a href="docs.html" class="btn">View Controls</a>
+                <div>
+                    <a href="docs.html" class="btn">View Controls</a>
+                    <a href="#demo" class="btn btn-secondary"
+                        >Interactive Demo</a
+                    >
+                </div>
             </section>
 
-            <section class="features">
+            <section id="demo" style="margin-bottom: 4rem">
                 <h2
                     style="
-                        margin-bottom: 1.5rem;
+                        margin-bottom: 1rem;
                         border-left: 4px solid var(--accent-yellow);
                         padding-left: 0.5rem;
+                        font-family: var(--font-mono);
                     "
                 >
-                    Three Windows, Single App
+                    Interactive Terminal Simulator
                 </h2>
-                <p style="margin-bottom: 2rem">
-                    CirPath avoids cluttered UI elements and boxed borders. Like
-                    classic nano, the interface is built from a plain title bar
-                    and reverse-video status bars. You can switch seamlessly
-                    between three distinct screens using <kbd>Ctrl+E</kbd> /
-                    <kbd>Ctrl+Q</kbd>.
+                <p style="margin-bottom: 1.5rem; color: #a0a0a5">
+                    Click the tabs below to dynamically switch the terminal
+                    mock-up views and preview CirPath's modular UI.
                 </p>
 
-                <div class="grid">
-                    <div class="card">
-                        <h3>01. Editor</h3>
-                        <p>
-                            Designed with a classic nano feature set. A 2-row by
-                            6-column shortcut grid is always visible at the
-                            bottom of the screen, keeping commands at your
-                            fingertips.
-                        </p>
+                <div class="terminal-simulator">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <div class="terminal-dot red"></div>
+                            <div class="terminal-dot yellow"></div>
+                            <div class="terminal-dot green"></div>
+                        </div>
+                        <div class="terminal-tabs">
+                            <button
+                                class="terminal-tab-btn active"
+                                onclick="switchSimTab('editor')"
+                            >
+                                [ Editor ]
+                            </button>
+                            <button
+                                class="terminal-tab-btn"
+                                onclick="switchSimTab('browser')"
+                            >
+                                [ File Browser ]
+                            </button>
+                            <button
+                                class="terminal-tab-btn"
+                                onclick="switchSimTab('menu')"
+                            >
+                                [ Menu ]
+                            </button>
+                        </div>
                     </div>
-                    <div class="card">
-                        <h3>02. File Browser</h3>
-                        <p>
-                            Easily navigate directories and create, delete, or
-                            rename files and folders. Opening a file can
-                            automatically switch focus back to the Editor.
-                        </p>
-                    </div>
-                    <div class="card">
-                        <h3>03. Menu</h3>
-                        <p>
-                            A Word-style, two-pane settings screen. Instantly
-                            toggle preferences and customize your editor. All
-                            changes persist automatically.
-                        </p>
+                    <div class="terminal-body" id="sim-body">
+                        <div class="tui-title-bar">
+                            <span>CirPath v1.0 - editor.rs</span>
+                            <span>Language: EN</span>
+                        </div>
+                        <div class="tui-content">
+                            <span class="tui-line-nums">01 02 03 04 05</span>fn
+                            main() { println!("Welcome to CirPath - Built
+                            entirely in Rust!"); let editor_focus = true; if
+                            editor_focus { println!("Press Ctrl+E to navigate
+                            smoothly."); } }
+                        </div>
+                        <div class="tui-status-bar">
+                            <span>[Read 6 lines]</span>
+                            <span>Ln 6, Col 1</span>
+                        </div>
+                        <div class="tui-shortcuts">
+                            <div class="tui-shortcut-item">
+                                <span>^G</span> Help
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^O</span> WriteOut
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^R</span> ReadFile
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^W</span> Where Is
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^\</span> Replace
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^_</span> Go To Line
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^K</span> Cut Text
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^U</span> UnCut
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^C</span> Cur Pos
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^S</span> Save
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^E</span> Next Win
+                            </div>
+                            <div class="tui-shortcut-item">
+                                <span>^X</span> Exit
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section class="build">
+            <section class="grid">
+                <div class="card">
+                    <h3>Borderless Philosophy</h3>
+                    <p>
+                        Designed strictly with zero platform-dependent emojis or
+                        special fonts. The UI relies only on clean, standard
+                        ASCII layout elements and classic reverse-video status
+                        lines.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>Self-Contained Screens</h3>
+                    <p>
+                        Each module—Editor, Browser, and Menu—is completely
+                        isolated. Easily expand code architecture without
+                        fearing broken side-effects across the app.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3>Immediate State Saves</h3>
+                    <p>
+                        All config adjustments made in the Word-style two-pane
+                        menu write and apply globally instantly, storing to
+                        local directories automatically.
+                    </p>
+                </div>
+            </section>
+
+            <section style="margin-bottom: 4rem">
                 <h2
                     style="
                         margin-bottom: 1.5rem;
                         border-left: 4px solid var(--accent-yellow);
                         padding-left: 0.5rem;
+                        font-family: var(--font-mono);
                     "
                 >
-                    Building & Running
+                    Building & Installation
                 </h2>
-                <p>
-                    Compile and run the app directly from your terminal with
-                    Cargo:
+                <p style="margin-bottom: 1rem">
+                    Verify your environment is set up with cargo, copy the build
+                    script block below, and launch it directly in your terminal:
                 </p>
-                <pre><code># Build the release binary
+
+                <div class="code-block-wrapper">
+                    <button class="copy-btn" id="copy-btn">Copy</button>
+                    <pre><code id="code-block"># Build release binaries directly
 cargo build --release
 
-# Run the app
+# Launch the binary executable
 ./target/release/cirpath</code></pre>
-                <div class="card" style="margin-top: 1rem; border-color: #555">
-                    <h4 style="color: var(--text-light); margin-bottom: 0.5rem">
-                        ⚠️ Toolchain Note
-                    </h4>
-                    <p style="font-size: 0.95rem">
-                        This project targets a minimum Rust toolchain of
-                        <strong>rustc 1.75 / cargo 1.75</strong> and pins exact
-                        dependency versions in <code>Cargo.toml</code> to ensure
-                        compatibility. If you are using a newer Rust toolchain,
-                        these pins are safe to relax using
-                        <code>cargo update</code>.
-                    </p>
                 </div>
             </section>
         </main>
 
         <footer>&copy; 2026 CirPath Project. Built with Rust.</footer>
+
+        <script src="app.js"></script>
     </body>
 </html>

@@ -3,15 +3,24 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Key Bindings - CirPath</title>
+        <title>Controls - CirPath</title>
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
         <header>
             <div class="nav-container">
-                <a href="index.html" class="logo">> CirPath</a>
+                <a href="index.html" class="logo">CirPath</a>
+                <button
+                    class="menu-toggle"
+                    id="menu-toggle"
+                    aria-label="Toggle navigation menu"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
                 <nav>
-                    <ul>
+                    <ul id="nav-links">
                         <li><a href="index.html">Home</a></li>
                         <li><a href="docs.html" class="active">Controls</a></li>
                         <li><a href="about.html">Specs & Limits</a></li>
@@ -23,179 +32,205 @@
         <main>
             <h1
                 style="
-                    margin-bottom: 2rem;
+                    margin-bottom: 1rem;
                     font-family: var(--font-mono);
                     color: var(--text-light);
                 "
             >
-                Key Bindings Reference
+                Key Bindings Guide
             </h1>
+            <p style="color: #a0a0a5; margin-bottom: 2rem">
+                Quickly find keys or shortcuts. Type what you want to do (e.g.
+                "Save", "Ctrl+S") below to search across all views instantly.
+            </p>
 
-            <section style="margin-bottom: 3rem">
-                <h2 style="color: var(--accent-yellow); margin-bottom: 1rem">
-                    Global Keys (Available on every screen)
+            <div class="search-container">
+                <input
+                    type="text"
+                    id="key-search"
+                    class="search-input"
+                    placeholder="Type to search controls..."
+                />
+            </div>
+
+            <section class="docs-section" style="margin-bottom: 3rem">
+                <h2
+                    style="
+                        color: var(--accent-yellow);
+                        margin-bottom: 1rem;
+                        font-family: var(--font-mono);
+                    "
+                >
+                    Global Controls
                 </h2>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 30%">Key</th>
+                            <th style="width: 25%">Key</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="searchable-tbody">
                         <tr>
                             <td><kbd>Ctrl+E</kbd></td>
                             <td>
-                                Switch to the next window (cycles Editor,
-                                Browser, Menu...)
+                                Switch to next window (Editor -> Browser ->
+                                Menu)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+Q</kbd></td>
-                            <td>Switch to the previous window</td>
+                            <td>Switch to previous window</td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+G</kbd></td>
                             <td>
-                                Help - jumps straight to the "Key Bindings"
-                                category in the Menu
+                                Help menu - Jumps directly to "Key Bindings" in
+                                Configuration
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </section>
 
-            <section style="margin-bottom: 3rem">
-                <h2 style="color: var(--accent-yellow); margin-bottom: 1rem">
+            <section class="docs-section" style="margin-bottom: 3rem">
+                <h2
+                    style="
+                        color: var(--accent-yellow);
+                        margin-bottom: 1rem;
+                        font-family: var(--font-mono);
+                    "
+                >
                     Editor Screen
                 </h2>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 30%">Key</th>
+                            <th style="width: 25%">Key</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="searchable-tbody">
                         <tr>
-                            <td>Printable characters</td>
+                            <td>Printable chars</td>
                             <td>
-                                Insert at the cursor (IME composition for
-                                Japanese/other inputs is handled by the OS)
+                                Insert at current cursor position (native OS IME
+                                handles Japanese composition)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Enter</kbd></td>
-                            <td>Insert a newline</td>
+                            <td>Insert line break / newline</td>
                         </tr>
                         <tr>
                             <td><kbd>Backspace</kbd> / <kbd>Delete</kbd></td>
                             <td>
-                                Delete character before/at the cursor (merges
-                                across line boundaries)
+                                Delete character before/at cursor (merges lines
+                                cleanly)
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                Arrow keys / <kbd>Home</kbd> / <kbd>End</kbd> /
-                                <kbd>Page Up</kbd> / <kbd>Page Down</kbd>
+                                Arrow Keys / <kbd>Home</kbd> / <kbd>End</kbd>
                             </td>
-                            <td>Move the cursor</td>
+                            <td>Move cursor positions</td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+S</kbd></td>
-                            <td>Save</td>
+                            <td>Save current open document</td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+O</kbd></td>
                             <td>
-                                Save As - prompts for a filename (Write Out)
+                                Save As (Write Out) - prompts target path name
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+R</kbd></td>
                             <td>
-                                Insert the contents of another file at the
-                                cursor (Read File)
+                                Insert contents of another document at cursor
+                                position (Read File)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+W</kbd></td>
                             <td>
-                                Search (Where Is). Press Enter on an empty
-                                prompt to repeat the last search
+                                Search matches (Where Is). Retries last search
+                                query on empty entry
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+\</kbd></td>
-                            <td>
-                                Replace - prompts for a search string, then a
-                                replacement, and replaces every match
-                            </td>
+                            <td>Global search and replace operations</td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+_</kbd></td>
-                            <td>Go to a specific line number</td>
+                            <td>Jump straight to line coordinates</td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+K</kbd></td>
                             <td>
-                                Cut current line (repeated presses accumulate
-                                into one clipboard buffer)
+                                Cut line to clipboard buffer (consecutive
+                                commands append items)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+U</kbd></td>
                             <td>
-                                Paste (UnCut) the last cut text at the cursor
+                                Paste (UnCut) elements back from active buffer
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+C</kbd></td>
                             <td>
-                                Show the current cursor position (line/column)
-                                and total line count
+                                Display metrics (cursor line/col, total items)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+X</kbd></td>
                             <td>
-                                Quit - press again to confirm if there are
-                                unsaved changes
+                                Exit / Quit (demands confirmation prompts on
+                                unsaved changes)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Esc</kbd></td>
                             <td>
-                                Cancel the current prompt (search / replace /
-                                save-as / go-to-line / insert-file)
+                                Cancel active input prompts
+                                (search/replace/jump)
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </section>
 
-            <section style="margin-bottom: 3rem">
-                <h2 style="color: var(--accent-yellow); margin-bottom: 1rem">
-                    File Browser Screen
+            <section class="docs-section" style="margin-bottom: 3rem">
+                <h2
+                    style="
+                        color: var(--accent-yellow);
+                        margin-bottom: 1rem;
+                        font-family: var(--font-mono);
+                    "
+                >
+                    File Browser
                 </h2>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 30%">Key</th>
+                            <th style="width: 25%">Key</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="searchable-tbody">
                         <tr>
                             <td><kbd>Up</kbd> / <kbd>Down</kbd></td>
-                            <td>Move the selection</td>
+                            <td>Scroll selection upwards or downwards</td>
                         </tr>
                         <tr>
                             <td><kbd>Enter</kbd> / <kbd>Right</kbd></td>
                             <td>
-                                Enter the selected directory, or open the
-                                selected file
+                                Explore folders or load file focus straight to
+                                editor
                             </td>
                         </tr>
                         <tr>
@@ -203,80 +238,86 @@
                                 <kbd>Backspace</kbd> / <kbd>Left</kbd> /
                                 <kbd>u</kbd>
                             </td>
-                            <td>Go up to the parent directory</td>
+                            <td>Ascend back up one directory level</td>
                         </tr>
                         <tr>
                             <td><kbd>g</kbd></td>
                             <td>
-                                Type an absolute or relative path to jump
-                                directly to it
+                                Direct absolute or relative path navigation
+                                jumps
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>n</kbd></td>
-                            <td>Create a new file in the current directory</td>
-                        </tr>
-                        <tr>
-                            <td><kbd>N</kbd> (Shift+n)</td>
                             <td>
-                                Create a new folder in the current directory
+                                Spawn new text document in current directory
+                                location
                             </td>
                         </tr>
                         <tr>
+                            <td><kbd>N</kbd> (Shift+n)</td>
+                            <td>Create new directory folder</td>
+                        </tr>
+                        <tr>
                             <td><kbd>r</kbd></td>
-                            <td>Rename the selected file or folder</td>
+                            <td>Rename selected file/folder paths</td>
                         </tr>
                         <tr>
                             <td><kbd>d</kbd></td>
                             <td>
-                                Delete the selected file or folder (asks for y/n
-                                confirmation first)
+                                Delete directory targets (requires strict y/n
+                                validations)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+H</kbd></td>
-                            <td>Toggle visibility of hidden (dot) files</td>
+                            <td>Toggle visibility of hidden dotfiles</td>
                         </tr>
                         <tr>
                             <td><kbd>Esc</kbd></td>
-                            <td>
-                                Cancel the current prompt (path entry / new file
-                                / new folder / rename)
-                            </td>
+                            <td>Cancel path inputs and creation prompts</td>
                         </tr>
                     </tbody>
                 </table>
             </section>
 
-            <section style="margin-bottom: 3rem">
-                <h2 style="color: var(--accent-yellow); margin-bottom: 1rem">
+            <section class="docs-section" style="margin-bottom: 3rem">
+                <h2
+                    style="
+                        color: var(--accent-yellow);
+                        margin-bottom: 1rem;
+                        font-family: var(--font-mono);
+                    "
+                >
                     Menu Screen
                 </h2>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 30%">Key</th>
+                            <th style="width: 25%">Key</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="searchable-tbody">
                         <tr>
                             <td><kbd>Left</kbd> / <kbd>Right</kbd></td>
                             <td>
-                                Switch focus between the category panel (left)
-                                and the detail panel (right)
+                                Toggle focus between navigation categories and
+                                settings list panel
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Up</kbd> / <kbd>Down</kbd></td>
-                            <td>Move the selection within the focused panel</td>
+                            <td>
+                                Navigate active selections in selected panel
+                                lists
+                            </td>
                         </tr>
                         <tr>
                             <td><kbd>Enter</kbd></td>
                             <td>
-                                From the left panel, moves into the right panel;
-                                from the right panel, applies/toggles the
-                                selected setting
+                                Confirm selection or toggle configuration
+                                checkboxes
                             </td>
                         </tr>
                     </tbody>
@@ -285,5 +326,7 @@
         </main>
 
         <footer>&copy; 2026 CirPath Project. Built with Rust.</footer>
+
+        <script src="app.js"></script>
     </body>
 </html>
