@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>仕様・制限 - CirPath</title>
+        <title>Specs & Limitations - CirPath</title>
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
@@ -12,10 +12,12 @@
                 <a href="index.html" class="logo">> CirPath</a>
                 <nav>
                     <ul>
-                        <li><a href="index.html">ホーム</a></li>
-                        <li><a href="docs.html">操作ガイド</a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="docs.html">Controls</a></li>
                         <li>
-                            <a href="about.html" class="active">仕様・制限</a>
+                            <a href="about.html" class="active"
+                                >Specs & Limits</a
+                            >
                         </li>
                     </ul>
                 </nav>
@@ -30,27 +32,28 @@
                     color: var(--text-light);
                 "
             >
-                仕様と制限事項
+                Specifications & Limitations
             </h1>
 
             <div class="grid">
                 <div class="card">
-                    <h3>完全な日本語・英語サポート</h3>
+                    <h3>Bilingual Support</h3>
                     <p>
-                        CirPathは日本語（JISコード範囲内）と英語の完全な2か国語表示に対応しています。メニュー、タイトル、エラー、さらにはPICO風のショートカットガイドに至るまで実行時に一瞬で切り替えが可能です。
-                    </p>
-                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #aaa">
-                        ※切り替えは「Menu -> General -> Switch display
-                        language」から行えます。
+                        CirPath ships with complete English and Japanese
+                        translations for every visible string: window titles,
+                        status messages, error prompts, menus, key-binding
+                        references, and the editor's shortcut grid. You can
+                        switch display languages instantly from
+                        <strong>Menu -> General</strong>.
                     </p>
                 </div>
 
                 <div class="card">
-                    <h3>アクセシブルなカラーパレット</h3>
+                    <h3>High-Contrast Color Palette</h3>
                     <p>
-                        一部の黒背景ターミナルにおいて、視認性が著しく低下する「ブルー
-                        /
-                        シアン」系統の色を徹底的に排除しています。配色はシンプルかつ明瞭な色構成に制限されています：
+                        The UI intentionally avoids blue/cyan tones, which are
+                        often hard to read on dark terminal background schemes.
+                        The palette is carefully restricted to:
                     </p>
                     <ul
                         style="
@@ -60,10 +63,16 @@
                             color: #ccc;
                         "
                     >
-                        <li>白背景 ＋ 黒文字（通常ステータス、プロンプト）</li>
-                        <li>赤背景 ＋ 白文字（エラー、警告表示）</li>
-                        <li>黄色太字（ファイルブラウザ内のディレクトリ名）</li>
-                        <li>ダークグレー（行番号、非フォーカス枠）</li>
+                        <li>
+                            White background + black text (normal status bars,
+                            prompts, title bar)
+                        </li>
+                        <li>
+                            Red background + white text (error messages,
+                            delete-confirmations)
+                        </li>
+                        <li>Yellow (bold) (directories in the File Browser)</li>
+                        <li>Dark gray (line numbers, unfocused menu panels)</li>
                     </ul>
                 </div>
             </div>
@@ -77,17 +86,20 @@
                         padding-left: 0.5rem;
                     "
                 >
-                    エラー表示の挙動
+                    Error Display Behavior
                 </h2>
                 <p>
-                    ファイル保存の失敗や検索不一致などのエラーが発生した場合、ステータスバーが自動で「赤背景」に変化します。
+                    Errors (such as failed saves or unsuccessful searches) are
+                    clearly flagged in the status bar with an unmistakable red
+                    background color.
                 </p>
                 <div class="error-callout">
-                    [ERROR] File could not be saved. /
-                    ファイルを保存できません。
+                    [ERROR] File could not be saved.
                 </div>
                 <p>
-                    このエラー表示は、何か次のキーが入力された瞬間に自動でクリアされる設計になっており、古いエラーメッセージが画面に残り続ける煩わしさから解放されます。
+                    Any subsequent keystroke automatically clears the message
+                    instantly, ensuring stale errors never linger on your screen
+                    and disrupt your workspace.
                 </p>
             </section>
 
@@ -100,12 +112,12 @@
                         padding-left: 0.5rem;
                     "
                 >
-                    既知の制限 (未実装の機能)
+                    Known Limitations
                 </h2>
                 <p>
-                    現時点で、以下の一般的なテキストエディタ機能は実装されていません。これらは既存の
-                    <code>editor.rs</code>
-                    アーキテクチャの上に、必要に応じて拡張可能です。
+                    To keep the application highly performant and codebase
+                    structured, the following advanced editing features are
+                    currently <strong>not</strong> implemented:
                 </p>
                 <ul
                     style="
@@ -114,14 +126,20 @@
                         line-height: 2;
                     "
                 >
-                    <li>マルチバッファ / タブ表示</li>
-                    <li>シンタックスハイライト</li>
-                    <li>アンドゥ (元に戻す) / リドゥ (やり直す)</li>
+                    <li>Multiple buffers / Tabbed editing</li>
+                    <li>Syntax highlighting</li>
+                    <li>Undo / Redo operations</li>
                     <li>
-                        コピー用のテキスト範囲選択 (行全体の切り取り
-                        <kbd>Ctrl+K</kbd> / 貼り付け <kbd>Ctrl+U</kbd> のみ対応)
+                        Text selection (marking) for copy - only whole-line
+                        cut/paste (<kbd>Ctrl+K</kbd> / <kbd>Ctrl+U</kbd>) is
+                        supported
                     </li>
                 </ul>
+                <p>
+                    These features are straightforward to add on top of the
+                    existing <code>editor.rs</code> structure if needed as the
+                    project scales.
+                </p>
             </section>
         </main>
 

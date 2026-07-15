@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,9 +12,9 @@
                 <a href="index.html" class="logo">> CirPath</a>
                 <nav>
                     <ul>
-                        <li><a href="index.html" class="active">ホーム</a></li>
-                        <li><a href="docs.html">操作ガイド</a></li>
-                        <li><a href="about.html">仕様・制限</a></li>
+                        <li><a href="index.html" class="active">Home</a></li>
+                        <li><a href="docs.html">Controls</a></li>
+                        <li><a href="about.html">Specs & Limits</a></li>
                     </ul>
                 </nav>
             </div>
@@ -24,10 +24,10 @@
             <section class="hero">
                 <h1>CirPath</h1>
                 <p>
-                    nano / pico
-                    にインスパイアされた、Rust製の極限までミニマルなターミナル専用テキストエディタ。
+                    A minimalist Rust TUI (terminal user interface) text editor
+                    inspired by nano and pico.
                 </p>
-                <a href="docs.html" class="btn">ドキュメントを見る</a>
+                <a href="docs.html" class="btn">View Controls</a>
             </section>
 
             <section class="features">
@@ -38,31 +38,40 @@
                         padding-left: 0.5rem;
                     "
                 >
-                    特徴的な3つのウィンドウ
+                    Three Windows, Single App
                 </h2>
                 <p style="margin-bottom: 2rem">
-                    CirPathは、余計な枠線を排除し、画面を最大限に活用できるボーダーレスデザインを採用しています。以下の3つのウィンドウを
-                    <kbd>Ctrl+E</kbd> /
-                    <kbd>Ctrl+Q</kbd> で瞬時に切り替えることができます。
+                    CirPath avoids cluttered UI elements and boxed borders. Like
+                    classic nano, the interface is built from a plain title bar
+                    and reverse-video status bars. You can switch seamlessly
+                    between three distinct screens using <kbd>Ctrl+E</kbd> /
+                    <kbd>Ctrl+Q</kbd>.
                 </p>
 
                 <div class="grid">
                     <div class="card">
                         <h3>01. Editor</h3>
                         <p>
-                            クラシックなnanoスタイルを踏襲。画面下部には常に2行×6列のショートカットキーガイドが表示され、コマンドに迷うことはありません。
+                            Designed with a classic nano feature set. A 2-row by
+                            6-column shortcut grid is always visible at the
+                            bottom of the screen, keeping commands at your
+                            fingertips.
                         </p>
                     </div>
                     <div class="card">
                         <h3>02. File Browser</h3>
                         <p>
-                            ファイルやフォルダの作成、削除、リネーム、ディレクトリ間の移動をスムーズに行えます。ファイルを選択すると、自動でエディタへと移行します。
+                            Easily navigate directories and create, delete, or
+                            rename files and folders. Opening a file can
+                            automatically switch focus back to the Editor.
                         </p>
                     </div>
                     <div class="card">
                         <h3>03. Menu</h3>
                         <p>
-                            Word風の2ペイン構成で直感的に設定を変更可能。変更内容はリアルタイムで反映され、設定ファイルへ自動保存されます。
+                            A Word-style, two-pane settings screen. Instantly
+                            toggle preferences and customize your editor. All
+                            changes persist automatically.
                         </p>
                     </div>
                 </div>
@@ -76,28 +85,28 @@
                         padding-left: 0.5rem;
                     "
                 >
-                    ビルド & 実行手順
+                    Building & Running
                 </h2>
                 <p>
-                    CirPathはRustで書かれており、以下のコマンドで簡単にビルド・実行できます。
+                    Compile and run the app directly from your terminal with
+                    Cargo:
                 </p>
-                <pre><code># リリースビルドの作成
+                <pre><code># Build the release binary
 cargo build --release
 
-# 実行
+# Run the app
 ./target/release/cirpath</code></pre>
                 <div class="card" style="margin-top: 1rem; border-color: #555">
                     <h4 style="color: var(--text-light); margin-bottom: 0.5rem">
-                        ⚠️ ツールチェーンに関する注意
+                        ⚠️ Toolchain Note
                     </h4>
                     <p style="font-size: 0.95rem">
-                        本プロジェクトは、最小のRustツールチェーンとして
-                        <strong>rustc 1.75 / cargo 1.75</strong>
-                        をターゲットにしています。依存関係は
-                        <code>Cargo.toml</code>
-                        にて厳密に固定されていますが、より新しいRustバージョンをご利用の場合は
-                        <code>cargo update</code>
-                        で制限を緩和することが可能です。
+                        This project targets a minimum Rust toolchain of
+                        <strong>rustc 1.75 / cargo 1.75</strong> and pins exact
+                        dependency versions in <code>Cargo.toml</code> to ensure
+                        compatibility. If you are using a newer Rust toolchain,
+                        these pins are safe to relax using
+                        <code>cargo update</code>.
                     </p>
                 </div>
             </section>

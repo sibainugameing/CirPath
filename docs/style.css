@@ -75,7 +75,7 @@ main {
     min-height: calc(100vh - 160px);
 }
 
-/* ヒーローセクション */
+/* Hero Section */
 .hero {
     text-align: center;
     padding: 4rem 1rem;
@@ -118,7 +118,7 @@ main {
     opacity: 0.9;
 }
 
-/* グリッドレイアウト */
+/* Grid Layout */
 .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -139,7 +139,7 @@ main {
     font-family: var(--font-mono);
 }
 
-/* コード・ターミナル表示 */
+/* Code & Terminal Blocks */
 pre {
     background-color: #000;
     border: 1px solid var(--border-color);
@@ -154,7 +154,7 @@ code {
     color: #a9ff94;
 }
 
-/* テーブルスタイル */
+/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -190,7 +190,7 @@ kbd {
     border-bottom: 2px solid #111;
 }
 
-/* フッター */
+/* Footer */
 footer {
     background-color: #0a0a0c;
     border-top: 1px solid var(--border-color);
@@ -200,7 +200,7 @@ footer {
     font-size: 0.9rem;
 }
 
-/* エラーステータス風コールアウト */
+/* Error Alert Style */
 .error-callout {
     background-color: var(--accent-red);
     color: white;

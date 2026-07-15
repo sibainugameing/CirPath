@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ja">
+<html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>操作ガイド - CirPath</title>
+        <title>Key Bindings - CirPath</title>
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
@@ -12,11 +12,9 @@
                 <a href="index.html" class="logo">> CirPath</a>
                 <nav>
                     <ul>
-                        <li><a href="index.html">ホーム</a></li>
-                        <li>
-                            <a href="docs.html" class="active">操作ガイド</a>
-                        </li>
-                        <li><a href="about.html">仕様・制限</a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="docs.html" class="active">Controls</a></li>
+                        <li><a href="about.html">Specs & Limits</a></li>
                     </ul>
                 </nav>
             </div>
@@ -30,37 +28,37 @@
                     color: var(--text-light);
                 "
             >
-                キーバインド リファレンス
+                Key Bindings Reference
             </h1>
 
             <section style="margin-bottom: 3rem">
                 <h2 style="color: var(--accent-yellow); margin-bottom: 1rem">
-                    グローバルキー (全画面共通)
+                    Global Keys (Available on every screen)
                 </h2>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 30%">キー入力</th>
-                            <th>アクション</th>
+                            <th style="width: 30%">Key</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><kbd>Ctrl+E</kbd></td>
                             <td>
-                                次のウィンドウへ切り替え (Editor → Browser →
-                                Menu)
+                                Switch to the next window (cycles Editor,
+                                Browser, Menu...)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+Q</kbd></td>
-                            <td>前のウィンドウへ切り替え</td>
+                            <td>Switch to the previous window</td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+G</kbd></td>
                             <td>
-                                ヘルプ - メニュー画面の「Key
-                                Bindings」へ直接ジャンプします
+                                Help - jumps straight to the "Key Bindings"
+                                category in the Menu
                             </td>
                         </tr>
                     </tbody>
@@ -69,106 +67,108 @@
 
             <section style="margin-bottom: 3rem">
                 <h2 style="color: var(--accent-yellow); margin-bottom: 1rem">
-                    Editor 画面 (nanoスタイル)
+                    Editor Screen
                 </h2>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 30%">キー入力</th>
-                            <th>アクション</th>
+                            <th style="width: 30%">Key</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>文字入力</td>
+                            <td>Printable characters</td>
                             <td>
-                                カーソル位置に文字を挿入
-                                (日本語などのIMEはOSが処理します)
+                                Insert at the cursor (IME composition for
+                                Japanese/other inputs is handled by the OS)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Enter</kbd></td>
-                            <td>改行を挿入</td>
+                            <td>Insert a newline</td>
                         </tr>
                         <tr>
                             <td><kbd>Backspace</kbd> / <kbd>Delete</kbd></td>
                             <td>
-                                カーソル前/カーソル位置の文字を削除
-                                (行をまたぐ結合に対応)
+                                Delete character before/at the cursor (merges
+                                across line boundaries)
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                矢印キー / <kbd>Home</kbd> / <kbd>End</kbd> /
+                                Arrow keys / <kbd>Home</kbd> / <kbd>End</kbd> /
                                 <kbd>Page Up</kbd> / <kbd>Page Down</kbd>
                             </td>
-                            <td>カーソルを移動</td>
+                            <td>Move the cursor</td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+S</kbd></td>
-                            <td>上書き保存</td>
+                            <td>Save</td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+O</kbd></td>
                             <td>
-                                名前を付けて保存
-                                (ファイル名を入力プロンプトで指定)
+                                Save As - prompts for a filename (Write Out)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+R</kbd></td>
                             <td>
-                                他のファイルの内容を現在のカーソル位置に挿入
-                                (ファイル読み込み)
+                                Insert the contents of another file at the
+                                cursor (Read File)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+W</kbd></td>
                             <td>
-                                検索。空の状態でEnterを押すと前回の検索をリピート
+                                Search (Where Is). Press Enter on an empty
+                                prompt to repeat the last search
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+\</kbd></td>
                             <td>
-                                置換
-                                (検索文字列と置換後文字列を入力し、全一致を置換)
+                                Replace - prompts for a search string, then a
+                                replacement, and replaces every match
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+_</kbd></td>
-                            <td>指定した行番号へジャンプ</td>
+                            <td>Go to a specific line number</td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+K</kbd></td>
                             <td>
-                                現在の行を切り取り
-                                (連続で押すとクリップボードに蓄積されます)
+                                Cut current line (repeated presses accumulate
+                                into one clipboard buffer)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+U</kbd></td>
                             <td>
-                                最後に切り取ったテキストをカーソル位置に貼り付け
+                                Paste (UnCut) the last cut text at the cursor
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+C</kbd></td>
                             <td>
-                                現在のカーソル位置 (行/列) および総行数を表示
+                                Show the current cursor position (line/column)
+                                and total line count
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+X</kbd></td>
                             <td>
-                                終了 (未保存の変更がある場合は、再度押して確認)
+                                Quit - press again to confirm if there are
+                                unsaved changes
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Esc</kbd></td>
                             <td>
-                                現在のプロンプト (検索・置換・保存・移動など)
-                                をキャンセル
+                                Cancel the current prompt (search / replace /
+                                save-as / go-to-line / insert-file)
                             </td>
                         </tr>
                     </tbody>
@@ -177,24 +177,25 @@
 
             <section style="margin-bottom: 3rem">
                 <h2 style="color: var(--accent-yellow); margin-bottom: 1rem">
-                    File Browser 画面
+                    File Browser Screen
                 </h2>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 30%">キー入力</th>
-                            <th>アクション</th>
+                            <th style="width: 30%">Key</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><kbd>Up</kbd> / <kbd>Down</kbd></td>
-                            <td>選択項目を移動</td>
+                            <td>Move the selection</td>
                         </tr>
                         <tr>
                             <td><kbd>Enter</kbd> / <kbd>Right</kbd></td>
                             <td>
-                                選択したディレクトリに入る、または選択したファイルを開く
+                                Enter the selected directory, or open the
+                                selected file
                             </td>
                         </tr>
                         <tr>
@@ -202,43 +203,46 @@
                                 <kbd>Backspace</kbd> / <kbd>Left</kbd> /
                                 <kbd>u</kbd>
                             </td>
-                            <td>親ディレクトリに移動</td>
+                            <td>Go up to the parent directory</td>
                         </tr>
                         <tr>
                             <td><kbd>g</kbd></td>
                             <td>
-                                絶対パスまたは相対パスを入力して、その場所へ直接ジャンプ
+                                Type an absolute or relative path to jump
+                                directly to it
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>n</kbd></td>
-                            <td>カレントディレクトリに新しいファイルを作成</td>
+                            <td>Create a new file in the current directory</td>
                         </tr>
                         <tr>
                             <td><kbd>N</kbd> (Shift+n)</td>
-                            <td>カレントディレクトリに新しいフォルダを作成</td>
+                            <td>
+                                Create a new folder in the current directory
+                            </td>
                         </tr>
                         <tr>
                             <td><kbd>r</kbd></td>
-                            <td>選択中のファイルまたはフォルダの名前を変更</td>
+                            <td>Rename the selected file or folder</td>
                         </tr>
                         <tr>
                             <td><kbd>d</kbd></td>
                             <td>
-                                選択中のファイル・フォルダを削除 (実行前に
-                                <code>y</code>/<code>n</code> の確認あり)
+                                Delete the selected file or folder (asks for y/n
+                                confirmation first)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Ctrl+H</kbd></td>
-                            <td>
-                                隠しファイル (ドットファイル)
-                                の表示/非表示を切り替え
-                            </td>
+                            <td>Toggle visibility of hidden (dot) files</td>
                         </tr>
                         <tr>
                             <td><kbd>Esc</kbd></td>
-                            <td>現在のプロンプトをキャンセル</td>
+                            <td>
+                                Cancel the current prompt (path entry / new file
+                                / new folder / rename)
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -246,31 +250,33 @@
 
             <section style="margin-bottom: 3rem">
                 <h2 style="color: var(--accent-yellow); margin-bottom: 1rem">
-                    Menu 画面
+                    Menu Screen
                 </h2>
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 30%">キー入力</th>
-                            <th>アクション</th>
+                            <th style="width: 30%">Key</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><kbd>Left</kbd> / <kbd>Right</kbd></td>
                             <td>
-                                左ペイン (カテゴリ) と右ペイン (詳細設定)
-                                のフォーカスを切り替え
+                                Switch focus between the category panel (left)
+                                and the detail panel (right)
                             </td>
                         </tr>
                         <tr>
                             <td><kbd>Up</kbd> / <kbd>Down</kbd></td>
-                            <td>フォーカス中のペイン内で選択項目を移動</td>
+                            <td>Move the selection within the focused panel</td>
                         </tr>
                         <tr>
                             <td><kbd>Enter</kbd></td>
                             <td>
-                                左ペインからは右ペインへ移動。右ペインからは設定を適用/切り替え
+                                From the left panel, moves into the right panel;
+                                from the right panel, applies/toggles the
+                                selected setting
                             </td>
                         </tr>
                     </tbody>
